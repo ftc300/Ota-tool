@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<FrameLayout
+		android:id="@+id/title_bar"
+		android:background="@color/colorPrimary"
+		android:layout_width="match_parent"
+		android:layout_height="50dp">
+
+		<TextView
+			android:id="@+id/bar_title"
+			android:textSize="15sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:textColor="@color/headerTextColor"
+			android:text="INSHOW OTA"
+			android:ellipsize="end"
+			android:maxLines="1" />
+
+
+		<ImageView
+			android:id="@+id/img_back"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_gravity="left|center"
+			android:paddingLeft="10dp"
+			android:scaleType="center"
+			android:src="@drawable/back" />
+
+	</FrameLayout>
+
+	<TextView
+		android:id="@+id/current_device"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="20sp"
+		android:layout_marginTop="10dp"
+		android:layout_gravity="center"
+		android:text="default mac"/>
+
+	<LinearLayout
+		android:id="@+id/dfu_pane"
+		style="@style/Widget.List"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginTop="15dp"
+		android:orientation="vertical">
+
+		<TextView
+			android:background="@color/colorPrimary"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="@color/white"
+			android:gravity="center"
+			android:text="升级过程"/>
+
+
+		<TextView
+			android:id="@+id/textviewUploading"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:freezesText="true"
+			android:text="into dfu mode"
+			/>
+
+		<ProgressBar
+			android:id="@+id/progressbar_file"
+			style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:indeterminate="true"
+			android:max="100"
+			/>
+
+		<TextView
+			android:id="@+id/textviewProgress"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp"
+			android:freezesText="true"
+			tools:text="0%"/>
+	</LinearLayout>
+
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="20sp"
+		android:layout_marginTop="5dp"
+		android:layout_gravity="center"
+		android:text="升级历史"/>
+	<ListView
+		android:id="@+id/history"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+	</ListView>
+
+</LinearLayout>

@@ -1,0 +1,18 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme">
+    </style>
+    <style name="Widget"/>
+
+    <style name="Widget.List">
+        <item name="android:background">@color/backgroundColor</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="Widget.ListTitle">
+        <item name="android:textColor">@color/headerTextColor</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">OTA</string>
+    <string name="dfu_uploading_percentage">%d%%</string>
+</resources>
