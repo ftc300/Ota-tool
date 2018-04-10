@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_camera"
+        android:title="摄像头"/>
+    <item android:id="@+id/menu_gun"
+        android:title="扫描枪"/>
+    <item android:id="@+id/menu_log"
+        android:title="文件记录"/>
+</menu>

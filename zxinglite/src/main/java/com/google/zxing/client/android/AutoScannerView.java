@@ -30,8 +30,8 @@ public class AutoScannerView extends View {
     private CameraManager cameraManager;
 
     private final int maskColor = Color.parseColor("#60000000");                          //蒙在摄像头上面区域的半透明颜色
-    private final int triAngleColor = Color.parseColor("#76EE00");                        //边角的颜色
-    private final int lineColor = Color.parseColor("#FF0000");                            //中间线的颜色
+    private final int triAngleColor = Color.parseColor("#009CDE");                   //边角的颜色
+    private final int lineColor = Color.parseColor("#009CDE");                            //中间线的颜色
     private final int textColor = Color.parseColor("#CCCCCC");                            //文字的颜色
     private final int triAngleLength = dp2px(20);                                         //每个角的点距离
     private final int triAngleWidth = dp2px(4);                                           //每个角的点宽度
@@ -119,7 +119,7 @@ public class AutoScannerView extends View {
             lineRect.top = frame.top + lineOffsetCount;
             lineRect.right = frame.right;
             lineRect.bottom = frame.top + dp2px(10) + lineOffsetCount;
-            canvas.drawBitmap(((BitmapDrawable)(getResources().getDrawable(R.drawable.scanline))).getBitmap(), null, lineRect, linePaint);
+            canvas.drawBitmap(((BitmapDrawable)(getResources().getDrawable(R.drawable.scanline_01))).getBitmap(), null, lineRect, linePaint);
         }
         postInvalidateDelayed(10L, frame.left, frame.top, frame.right, frame.bottom);
     }

@@ -25,6 +25,7 @@ public final class R {
     }
     public static final class drawable {
         public static int scanline=0x7f020000;
+        public static int scanline_01=0x7f020001;
     }
     public static final class raw {
         public static int beep=0x7f030000;

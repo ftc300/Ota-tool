@@ -16,6 +16,9 @@
     <color name="headerTextColor">#FFFFFF</color>
     <color name="actionBarMenuTextColor">#FFFFFF</color>
     <color name="white">#ffffff</color>
-
+    <color name="divider_color">#FFB7B2B2</color>
     <color name="darkGray">#AAABAF</color>
+
+    <color name="red_normal">#FF0000</color>
+    <color name="red_pressed">#FF6666</color>
 </resources>

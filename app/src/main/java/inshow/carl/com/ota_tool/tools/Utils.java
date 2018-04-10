@@ -1,8 +1,12 @@
 package inshow.carl.com.ota_tool.tools;
 
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
+import android.widget.Toast;
 
 import java.net.URISyntaxException;
 
@@ -18,6 +22,7 @@ import no.nordicsemi.android.dfu.internal.scanner.BootloaderScanner;
 public class Utils {
     /**
      * dfu 升级 mac地址加1
+     *
      * @param deviceAddress
      * @return
      */
@@ -30,7 +35,7 @@ public class Utils {
 
     public static String getPath(Context context, Uri uri) throws URISyntaxException {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
+            String[] projection = {"_data"};
             Cursor cursor = null;
 
             try {
@@ -42,27 +47,83 @@ public class Utils {
             } catch (Exception e) {
                 // Eat it
             }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
 
         return null;
     }
 
-    //    16023/213G0460-705896002EC2
-    public static String getScanMac(String content) {
-        StringBuffer  result = new StringBuffer();
+    // 705896002EC2
+    public static String formateMac(String content) {
+        StringBuffer result = new StringBuffer(content);
         try {
-            String[] temp = content.split("-");
-            result = new StringBuffer(temp[1]);
             for (int index = 2; index < result.length(); index += 3) {
                 result.insert(index, ':');
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return result.toString();
+    }
+    //    16023/213G0460-705896002EC2
+    public static String getDisplayMac(String content) {
+        StringBuffer result = new StringBuffer();
+        try {
+            String[] temp = content.split("-");
+            result = new StringBuffer(temp[1]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result.toString();
+    }
+
+    public static  void checkBleAdapter(final  Context context) {
+        BluetoothAdapter blueadapter = BluetoothAdapter.getDefaultAdapter();
+        //支持蓝牙模块
+        if (blueadapter != null) {
+            if (blueadapter.isEnabled()) {
+            } else {
+                new AlertDialog.Builder(context).setTitle("蓝牙功能尚未打开，是否打开蓝牙")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (turnOnBluetooth()) {
+                                    Toast tst = Toast.makeText(context, "打开蓝牙成功", Toast.LENGTH_SHORT);
+                                    tst.show();
+                                } else {
+                                    Toast tst = Toast.makeText(context, "打开蓝牙失败！！", Toast.LENGTH_SHORT);
+                                    tst.show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 点击“返回”后的操作,这里不设置没有任何操作
+                            }
+                        }).show();
+            }
+        } else {//不支持蓝牙模块
+            Toast tst = Toast.makeText(context, "该设备不支持蓝牙或没有蓝牙模块", Toast.LENGTH_SHORT);
+            tst.show();
+        }
+    }
+
+    /**
+     * 强制开启当前 Android 设备的 Bluetooth
+     *
+     * @return true：强制打开 Bluetooth　成功　false：强制打开 Bluetooth 失败
+     */
+    public static boolean turnOnBluetooth() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter
+                .getDefaultAdapter();
+
+        if (bluetoothAdapter != null) {
+            return bluetoothAdapter.enable();
+        }
+
+        return false;
     }
 }

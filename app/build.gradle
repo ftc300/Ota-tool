@@ -29,6 +29,7 @@ dependencies {
     compile 'no.nordicsemi.android:dfu:1.2.0'
     compile 'no.nordicsemi.android.support.v18:scanner:1.0.0'
     compile project(path: ':zxinglite')
+    compile project(path: ':swipelib')
     compile 'com.github.satyan:sugar:1.5'
-
+    compile 'org.greenrobot:eventbus:3.1.1'
 }

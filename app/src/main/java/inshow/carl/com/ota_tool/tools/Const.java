@@ -8,9 +8,17 @@ package inshow.carl.com.ota_tool.tools;
 
 
 public interface Const {
-    public static final String ARG_MAC = "ARG_MAC";
-    public static final String ARG_FILE_PATH = "ARG_FILE_PATH";
-    public static final int PERMISSION_REQ= 44017;
+    String ARG_MAC = "ARG_MAC";
+    String ARG_FILE_PATH = "ARG_FILE_PATH";
+    int PERMISSION_REQ = 44017;
+    int ACT_REQ_CODE = 4101557;
+    int FILE_SELECT_CODE = 44;
+    int PROCESS_INDETERMINATE_FALSE = -2;
+    int PROCESS_INDETERMINATE_TRUE = -1;
+    int STATE_FAIL = -1;
+    int STATE_SUCCESS = 1;
+    int STATE_PROCESSING = 0;
+    int STATE_INIT = -2;
 
 
 }

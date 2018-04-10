@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
+    style="@style/Widget.List"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    style="@style/Widget.List"
     tools:context="inshow.carl.com.ota_tool.MainActivity">
 
     <FrameLayout
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/colorPrimary"
-      >
+        android:background="@color/colorPrimary">
 
         <TextView
             android:id="@+id/bar_title"
@@ -25,12 +25,23 @@
             android:text="INSHOW OTA"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="更多"
+            android:textColor="@color/headerTextColor"
+            android:textSize="15sp" />
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -40,33 +51,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:text="当前选择文件名:" />
-
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/file_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="middle"
-                android:freezesText="true"
-                android:lines="1" />
-        </TableRow>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_gravity="left"
             android:text="所选文件路径:" />
 
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="50dp">
 
             <TextView
                 android:id="@+id/file_path"
@@ -74,31 +65,87 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="middle"
-                android:freezesText="true"
-                />
+                android:layout_gravity="center"
+                android:gravity="left"
+                android:freezesText="true" />
+
+            <Button
+                android:id="@+id/select_file"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_bg"
+                android:text="选择文件"
+                android:textColor="@color/white" />
         </TableRow>
 
 
     </LinearLayout>
 
+    <include
+        android:id="@+id/header"
+        android:visibility="gone"
+        layout="@layout/item_menu_main_header"/>
 
-    <Button
-        android:id="@+id/select_file"
+    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:text="选择文件" />
+        android:layout_marginTop="5dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <Button
-        android:id="@+id/switchDfu"
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_input_type"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:text="开始升级" />
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_input_mac"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/edit_bg"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="705896003CA0"
+            android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            android:maxLength="12" />
+
+        <Button
+            android:id="@+id/btn_input_sure"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_bg"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:enabled="false"
+            android:text="确认添加"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_scan_type"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/btn_bg"
+            android:text="扫描添加"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
 
 </LinearLayout>
