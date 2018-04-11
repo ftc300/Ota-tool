@@ -1,16 +1,25 @@
 package inshow.carl.com.ota_tool.tools;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import inshow.carl.com.ota_tool.entity.DeviceEntity;
 import no.nordicsemi.android.dfu.internal.scanner.BootloaderScanner;
+
+import static inshow.carl.com.ota_tool.tools.Const.STATE_SUCCESS;
 
 /**
  * @ 创建者:   CoderChen
@@ -66,6 +75,7 @@ public class Utils {
         }
         return result.toString();
     }
+
     //    16023/213G0460-705896002EC2
     public static String getDisplayMac(String content) {
         StringBuffer result = new StringBuffer();
@@ -78,7 +88,7 @@ public class Utils {
         return result.toString();
     }
 
-    public static  void checkBleAdapter(final  Context context) {
+    public static void checkBleAdapter(final Context context) {
         BluetoothAdapter blueadapter = BluetoothAdapter.getDefaultAdapter();
         //支持蓝牙模块
         if (blueadapter != null) {
@@ -126,4 +136,52 @@ public class Utils {
 
         return false;
     }
+
+    public static void writeData2SD(DeviceEntity de) {
+        File sdcard = Environment.getExternalStorageDirectory();
+        File dir = new File(sdcard.getAbsolutePath() + "/0-inshow-ota/");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        File file = new File(dir, "upgrade-log.txt");
+        try {
+            FileOutputStream os = new FileOutputStream(file,true);
+            os.write(getFormatLog(de).getBytes());
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static String getFormatLog(DeviceEntity e) {
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return  sdf.format(d)  + "      " +
+                e.getTrueMac() + "      " +
+                (e.state == STATE_SUCCESS ? "Success" : "Fail") +
+                (e.state == STATE_SUCCESS ?  e.filePath : "") +
+                " \n";
+    }
+
+    public static void showExitD(final Context c) {
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(c)
+                        .setMessage("任务正在执行中，退出后，将取消所有任务,确定退出吗？").setPositiveButton("确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ((Activity)c).finish();
+                            }
+                        })
+                        .setNegativeButton("取消",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+        normalDialog.show();
+    }
+
+
 }

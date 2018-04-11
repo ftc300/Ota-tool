@@ -7,14 +7,12 @@
    >
 
     <SurfaceView
-        android:layout_below="@+id/title_bar"
         android:id="@+id/preview_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <com.google.zxing.client.android.AutoScannerView
         android:id="@+id/autoscanner_view"
-        android:layout_below="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"

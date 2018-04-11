@@ -19,6 +19,9 @@ public interface Const {
     int STATE_SUCCESS = 1;
     int STATE_PROCESSING = 0;
     int STATE_INIT = -2;
+    int VIEW_TYPE_NONE = 11;
+    int VIEW_TYPE_AGAIN = 12;
+    int VIEW_TYPE_DELETE = 13;
 
 
 }

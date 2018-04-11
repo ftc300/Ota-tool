@@ -38,7 +38,20 @@
             android:gravity="center"
             android:text="升级进度"
             android:textSize="13sp" />
-
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/divider_color" />
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="结果"
+            />
     </LinearLayout>
 
     <View

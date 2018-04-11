@@ -30,6 +30,8 @@ import java.util.List;
 import inshow.carl.com.ota_tool.R;
 import inshow.carl.com.ota_tool.entity.DeviceEntity;
 
+import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_FALSE;
+import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_TRUE;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_FAIL;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_INIT;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_PROCESSING;
@@ -62,8 +64,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         super.notifyDataSetChanged();
     }
 
-    private DeviceEntity getItem(int pos){
-        if(null!=mDataList){
+    public DeviceEntity getItem(int pos){
+        if(null!=mDataList && mDataList.size()>0){
             return  mDataList.get(pos);
         }
         return null;
@@ -85,7 +87,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle;
+        TextView tvTitle , tvResult;
         ProgressBar pb;
         ImageView imgState;
         Context context;
@@ -94,33 +96,39 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             super(itemView);
             this.context = context;
             tvTitle = (TextView) itemView.findViewById(R.id.tv_mac);
+            tvResult = (TextView) itemView.findViewById(R.id.tv_result);
             pb = (ProgressBar) itemView.findViewById(R.id.item_progressbar);
             imgState = (ImageView) itemView.findViewById(R.id.img_state);
         }
 
         public void setData(DeviceEntity entity) {
             this.tvTitle.setText(entity.mac);
-            if(entity.state == STATE_INIT){
-                pb.setVisibility(View.GONE);
-            }else if(entity.state == STATE_SUCCESS ){
-                pb.setVisibility(View.GONE);
-            }else if(entity.state == STATE_PROCESSING){
-                pb.setVisibility(View.VISIBLE);
-                pb.setProgress(entity.process);
-            }else if(entity.state == STATE_FAIL){
-                pb.setVisibility(View.GONE);
-            }
-
             if(entity.state == STATE_PROCESSING){
+                pb.setVisibility(View.VISIBLE);
+                if(entity.process == PROCESS_INDETERMINATE_TRUE){
+                    pb.setIndeterminate(true);
+                    tvResult.setText("init");
+                }else if (entity.process == PROCESS_INDETERMINATE_FALSE) {
+                    pb.setIndeterminate(false);
+                }else if(entity.process<=100 && entity.process >=0){
+                    pb.setIndeterminate(false);
+                    pb.setProgress(entity.process);
+                    tvResult.setText(entity.process + "%");
+                }
                 imgState.setVisibility(View.GONE);
             }else if(entity.state == STATE_FAIL){
+                pb.setVisibility(View.GONE);
                 imgState.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.fail));
                 imgState.setVisibility(View.VISIBLE);
+                tvResult.setText("fail");
             }else if(entity.state == STATE_SUCCESS){
                 imgState.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.success));
                 imgState.setVisibility(View.VISIBLE);
+                pb.setVisibility(View.GONE);
+                tvResult.setText("done");
             } else if(entity.state == STATE_INIT){
                 imgState.setVisibility(View.GONE);
+                pb.setVisibility(View.GONE);
             }
 
         }

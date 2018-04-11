@@ -1,6 +1,10 @@
 package inshow.carl.com.ota_tool.entity;
 
+import android.text.TextUtils;
+
 import com.orm.SugarRecord;
+
+import inshow.carl.com.ota_tool.tools.Utils;
 
 /**
  * @ 创建者:   CoderChen
@@ -9,18 +13,24 @@ import com.orm.SugarRecord;
  */
 
 public class DeviceEntity extends SugarRecord {
-    public String mac ;
+    public String mac;
     public int process;
-    public int state ; //0: 准备升级;1:升级成功;2s失败
-    public long timestamp;
+    public int state;
+    public String filePath;
+
+    public String getTrueMac() {
+        if (TextUtils.isEmpty(mac))
+            return "";
+        return Utils.formateMac(mac);
+    }
 
     public DeviceEntity() {
     }
 
-    public DeviceEntity(String mac, int process, int state, long timestamp) {
+    public DeviceEntity(String mac, int process, int state ,String filePath) {
         this.mac = mac;
         this.process = process;
         this.state = state;
-        this.timestamp = timestamp;
+        this.filePath = filePath;
     }
 }

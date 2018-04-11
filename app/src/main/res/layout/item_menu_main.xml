@@ -30,7 +30,7 @@
         <ProgressBar
             android:id="@+id/item_progressbar"
             style="@android:style/Widget.Holo.ProgressBar.Horizontal"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:indeterminate="false"
@@ -48,5 +48,18 @@
             android:src="@drawable/success"/>
 
     </FrameLayout>
+    <View
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:background="@color/divider_color" />
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:textSize="13sp"
+        tools:text="10%" />
 
 </LinearLayout>

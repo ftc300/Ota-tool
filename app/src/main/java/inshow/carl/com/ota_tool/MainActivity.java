@@ -1,12 +1,15 @@
 package inshow.carl.com.ota_tool;
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +19,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,16 +26,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,16 +37,34 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import inshow.carl.com.ota_tool.adapter.MainAdapter;
 import inshow.carl.com.ota_tool.entity.DeviceEntity;
-import inshow.carl.com.ota_tool.entity.FileEntity;
-import inshow.carl.com.ota_tool.tools.Utils;
+import inshow.carl.com.ota_tool.upgrade.BluetoothLeService;
+import no.nordicsemi.android.dfu.DfuProgressListener;
+import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
+import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
 
+import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuCreator;
+import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuItemClickListener;
+import static inshow.carl.com.ota_tool.MainPagerHelper.handleChooseFile;
+import static inshow.carl.com.ota_tool.MainPagerHelper.loadFileInfo;
+import static inshow.carl.com.ota_tool.MainPagerHelper.makeGattUpdateIntentFilter;
+import static inshow.carl.com.ota_tool.MainPagerHelper.showFileChooser;
+import static inshow.carl.com.ota_tool.MainPagerHelper.startOTA;
+import static inshow.carl.com.ota_tool.MainPagerHelper.startScan;
 import static inshow.carl.com.ota_tool.tools.Const.ACT_REQ_CODE;
 import static inshow.carl.com.ota_tool.tools.Const.ARG_MAC;
 import static inshow.carl.com.ota_tool.tools.Const.FILE_SELECT_CODE;
 import static inshow.carl.com.ota_tool.tools.Const.PERMISSION_REQ;
+import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_FALSE;
 import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_TRUE;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_FAIL;
+import static inshow.carl.com.ota_tool.tools.Const.STATE_INIT;
+import static inshow.carl.com.ota_tool.tools.Const.STATE_PROCESSING;
+import static inshow.carl.com.ota_tool.tools.Const.STATE_SUCCESS;
+import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_AGAIN;
+import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_NONE;
 import static inshow.carl.com.ota_tool.tools.Utils.checkBleAdapter;
+import static inshow.carl.com.ota_tool.tools.Utils.showExitD;
+import static inshow.carl.com.ota_tool.tools.Utils.writeData2SD;
 
 public class MainActivity extends BasicAct implements TextWatcher {
     @InjectView(R.id.select_file)
@@ -76,6 +89,105 @@ public class MainActivity extends BasicAct implements TextWatcher {
     @InjectView(R.id.et_input_mac)
     EditText et;
     LinearLayoutManager linearLayoutManager;
+    private BluetoothLeService mBluetoothLeService;
+    private int currentPos = 0;
+    private DeviceEntity currentDeviceEntity;
+    private int taskState = STATE_INIT;
+    private int intoDfuFlag = 0;
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            if (!mBluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+            if(!TextUtils.isEmpty(getCurrentMac())) {
+                Log.d(TAG, "onServiceConnected  " + getCurrentMac());
+                mBluetoothLeService.connect(getCurrentMac());
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLeService = null;
+        }
+    };
+
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                Log.d(TAG, getCurrentMac() + " Connected");
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Log.d(TAG, getCurrentMac() + " Disconnected");
+                mBluetoothLeService.disconnect();
+                if(intoDfuFlag >0 ) {
+                    startOTA(context, getCurrentMac());
+                    intoDfuFlag = 0;
+                }
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.d(TAG, getCurrentMac() + " Services Discovered");
+                mBluetoothLeService.writeCharacteristic();
+                intoDfuFlag++;
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                Log.d(TAG, "Data Available");
+            }
+        }
+    };
+
+
+    private final DfuProgressListener mDfuProgressListener = new DfuProgressListenerAdapter() {
+        private int mPercent;
+
+        @Override
+        public void onDeviceDisconnecting(final String deviceAddress) {
+            Log.e(TAG,"onDeviceDisconnecting");
+            if (mPercent < 100) {
+                currentDeviceEntity = mAdapter.getItem(currentPos);
+                currentDeviceEntity.state = STATE_FAIL;
+                mAdapter.notifyItemChanged(currentPos);
+                writeData2SD(currentDeviceEntity);
+                currentPos++;
+                if (currentPos < mAdapter.getItemCount()) {
+                    startScan(getCurrentMac(), mBluetoothLeService);
+                }
+            }
+        }
+
+        @Override
+        public void onDfuCompleted(final String deviceAddress) {
+            Log.e(TAG,"onDfuCompleted");
+            currentDeviceEntity = mAdapter.getItem(currentPos);
+            currentDeviceEntity.state = STATE_SUCCESS;
+            mAdapter.notifyItemChanged(currentPos);
+            writeData2SD(currentDeviceEntity);
+            if (currentPos < mAdapter.getItemCount() - 2) {
+                currentPos++;
+                startScan(getCurrentMac(), mBluetoothLeService);
+            }
+        }
+
+        @Override
+        public void onProgressChanged(final String deviceAddress, final int percent, final float speed, final float avgSpeed, final int currentPart, final int partsTotal){
+            Log.d(TAG,"onProgressChanged" + percent);
+            mPercent = percent;
+            currentDeviceEntity = mAdapter.getItem(currentPos);
+            currentDeviceEntity.state = STATE_PROCESSING;
+            currentDeviceEntity.process = mPercent;
+            mAdapter.notifyItemChanged(currentPos);
+        }
+
+        @Override
+        public void onError(final String deviceAddress, final int error, final int errorType, final String message) {
+            currentDeviceEntity = mAdapter.getItem(currentPos);
+            currentDeviceEntity.state = STATE_FAIL;
+            mAdapter.notifyItemChanged(currentPos);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,32 +203,24 @@ public class MainActivity extends BasicAct implements TextWatcher {
         selectFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFileChooser();
+                showFileChooser((Activity) context);
             }
         });
-        loadFileInfo();
+        loadFileInfo(filePath);
         et.addTextChangedListener(this);
-        btnInputSure.setEnabled(et.getText().toString().length() == 12);
+        btnInputSure.setEnabled(getBtnInputSureUsed());
         checkBleAdapter(this);
         initSwipe();
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
-
-    private void showFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/zip");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        try {
-            startActivityForResult(
-                    Intent.createChooser(intent, "Select a File to Upload"),
-                    FILE_SELECT_CODE);
-        } catch (ActivityNotFoundException ex) {
-            // Potentially direct the user to the Market with a Dialog
-            Toast.makeText(this, "Please install a File Manager.",
-                    Toast.LENGTH_SHORT).show();
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        DfuServiceListenerHelper.registerProgressListener(this, mDfuProgressListener);
     }
-
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
@@ -128,27 +232,11 @@ public class MainActivity extends BasicAct implements TextWatcher {
         switch (requestCode) {
             case FILE_SELECT_CODE:
                 if (resultCode == RESULT_OK) {
-                    // Get the Uri of the selected file
-                    Uri uri = data.getData();
-                    Log.d(TAG, "File Uri: " + uri.toString());
-                    // Get the path
-                    String path = null;
-                    try {
-                        path = Utils.getPath(this, uri);
-                        Log.d(TAG, "File Path: " + path);
-                        if (null != path) {
-                            final File file = new File(path);
-                            filePath.setText(path);
-                            saveSelectFileInfo(path, file.getName());
-                        }
-
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
+                    handleChooseFile(context, data, filePath);
                 }
             case ACT_REQ_CODE:
                 try {
-                    if(null!=data) {
+                    if (null != data) {
                         String mac = data.getExtras().getString(ARG_MAC);//得到新Activity 关闭后返回的数据
                         addDevice2List(mac);
                     }
@@ -161,16 +249,19 @@ public class MainActivity extends BasicAct implements TextWatcher {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void saveSelectFileInfo(String path, String name) {
-        FileEntity fileEntity = new FileEntity(path, name);
-        fileEntity.save();
+    private String getCurrentMac() {
+        currentDeviceEntity = mAdapter.getItem(currentPos);
+        if (null != currentDeviceEntity)
+            return currentDeviceEntity.getTrueMac();
+        return "";
     }
 
-    private void loadFileInfo() {
-        FileEntity f = FileEntity.last(FileEntity.class);
-        if (null != f) {
-            filePath.setText(f.filePath);
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mGattUpdateReceiver);
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
     }
 
 
@@ -205,6 +296,10 @@ public class MainActivity extends BasicAct implements TextWatcher {
 
     @OnClick(R.id.btn_scan)
     public void Scan() {
+        if (filePath.getText().length() == 0) {
+            showToast("请先选择固件(￢_￢)");
+            return;
+        }
         startActivityForResult(new Intent(MainActivity.this, WeChatCaptureActivity.class), ACT_REQ_CODE);
     }
 
@@ -214,12 +309,22 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private void addDevice2List(String mac) {
-        if(TextUtils.isEmpty(mac)) return;
+        if (TextUtils.isEmpty(mac)) return;
         //        String mac, int process, int state, long timestamp
-        DeviceEntity entity = new DeviceEntity(mac, PROCESS_INDETERMINATE_TRUE, STATE_FAIL, System.currentTimeMillis());
+        DeviceEntity entity = new DeviceEntity(mac, PROCESS_INDETERMINATE_FALSE, STATE_INIT, filePath.getText().toString());
         if (!hasAddDevice(entity)) {
             mDataList.add(entity);
             mAdapter.notifyDataSetChanged(mDataList);
+            if (isFirstItem()) {
+                findViewById(R.id.header).setVisibility(View.VISIBLE);
+            }
+            if(!isProcessing()){
+                currentDeviceEntity = mAdapter.getItem(currentPos);
+                currentDeviceEntity.state = STATE_PROCESSING;
+                currentDeviceEntity.process = PROCESS_INDETERMINATE_TRUE;
+                mAdapter.notifyItemChanged(currentPos);
+                startScan(getCurrentMac(), mBluetoothLeService);
+            }
             showToast("添加成功 (●’◡’●)");
         } else {
             Toast.makeText(context, "已经在列表中，请勿重复添加，已经为您忽略该操作(￢_￢)", Toast.LENGTH_LONG).show();
@@ -227,10 +332,6 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private boolean hasAddDevice(DeviceEntity entity) {
-        if (mDataList.size() == 0) {
-            findViewById(R.id.header).setVisibility(View.VISIBLE);
-            return false;
-        }
         for (DeviceEntity item : mDataList) {
             if (item.mac.toUpperCase().equals(entity.mac.toUpperCase())) {
                 return true;
@@ -239,60 +340,35 @@ public class MainActivity extends BasicAct implements TextWatcher {
         return false;
     }
 
+    private boolean isFirstItem() {
+        return mDataList.size() == 1;
+    }
+
     private void initSwipe() {
-        mAdapter = new MainAdapter(this);
+        mAdapter = new MainAdapter(this){
+            @Override
+            public int getItemViewType(int position) {
+                currentDeviceEntity = getItem(position);
+                if(null!=currentDeviceEntity) {
+                    if (currentDeviceEntity.state == STATE_SUCCESS || currentDeviceEntity.state == STATE_PROCESSING)  return VIEW_TYPE_NONE;
+                    else if (currentDeviceEntity.state == STATE_FAIL) return VIEW_TYPE_AGAIN;
+                    else if (currentDeviceEntity.state == STATE_INIT ) return VIEW_TYPE_NONE;
+                }
+                return VIEW_TYPE_NONE;
+            }
+        };
         linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.addItemDecoration(new DefaultItemDecoration(ContextCompat.getColor(this, R.color.divider_color)));
-        mRecyclerView.setSwipeMenuCreator(swipeMenuCreator);
-        mRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener);
+        mRecyclerView.setSwipeMenuCreator(getSwipeMenuCreator(context));
+        mRecyclerView.setSwipeMenuItemClickListener(getSwipeMenuItemClickListener(context, currentPos, mAdapter));
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged(mDataList);
     }
 
-    private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = getResources().getDimensionPixelSize(R.dimen.dp_70);
-            // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
-            // 2. 指定具体的高，比如80;
-            // 3. WRAP_CONTENT，自身高度，不推荐;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            // 添加右侧的，如果不添加，则右侧不会出现菜单。
-            {
-                SwipeMenuItem deleteItem = new SwipeMenuItem(context)
-                        .setBackground(R.drawable.selector_red)
-                        .setImage(R.drawable.ic_action_delete)
-                        .setText("删除")
-                        .setTextColor(Color.WHITE)
-                        .setWidth(width)
-                        .setHeight(height);
-                swipeRightMenu.addMenuItem(deleteItem);// 添加菜单到右侧。
-            }
-        }
-    };
-
-    /**
-     * RecyclerView的Item的Menu点击监听。
-     */
-    private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            menuBridge.closeMenu();
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-            int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                if (menuPosition == 0) {
-                    mAdapter.removeAtNotify(adapterPosition);
-                }
-            }
-        }
-    };
-
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        btnInputSure.setEnabled(et.getText().toString().length() == 12);
+        btnInputSure.setEnabled(getBtnInputSureUsed());
     }
 
     @Override
@@ -302,6 +378,25 @@ public class MainActivity extends BasicAct implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable editable) {
-        btnInputSure.setEnabled(et.getText().toString().length() == 12);
+        btnInputSure.setEnabled(getBtnInputSureUsed());
     }
+
+    private boolean getBtnInputSureUsed() {
+        return et.getText().toString().length() == 12 && filePath.getText().length() > 0;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showExitD(context);
+    }
+
+
+    private boolean isProcessing(){
+        currentDeviceEntity = mAdapter.getItem(currentPos);
+        if (null != currentDeviceEntity)
+            return currentDeviceEntity.state == STATE_PROCESSING;
+        return false;
+    }
+
 }

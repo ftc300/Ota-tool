@@ -113,7 +113,7 @@
             android:layout_marginRight="20dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="705896003CA0"
+            android:text="705896000154"
             android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
             android:maxLength="12" />
 

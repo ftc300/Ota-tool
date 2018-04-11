@@ -97,13 +97,7 @@ public class DfuAct extends BasicAct {
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mTextPercentage.setText("Disconnected");
                 invalidateOptionsMenu();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startOTA();
-                    }
-                }, 3000);
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 mTextPercentage.setText("Discover Dfu Service");
                 mBluetoothLeService.writeCharacteristic();
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
