@@ -157,9 +157,9 @@ public class Utils {
     public static String getFormatLog(DeviceEntity e) {
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return  sdf.format(d)  + "      " +
-                e.getTrueMac() + "      " +
-                (e.state == STATE_SUCCESS ? "Success" : "Fail") +
+        return  sdf.format(d)  + "  " +
+                e.getTrueMac() + "  " +
+                (e.state == STATE_SUCCESS ? "Success  " : "Fail  ") +
                 (e.state == STATE_SUCCESS ?  e.filePath : "") +
                 " \n";
     }
@@ -167,7 +167,7 @@ public class Utils {
     public static void showExitD(final Context c) {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(c)
-                        .setMessage("任务正在执行中，退出后，将取消所有任务,确定退出吗？").setPositiveButton("确定",
+                        .setMessage("确定退出吗？").setPositiveButton("确定",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

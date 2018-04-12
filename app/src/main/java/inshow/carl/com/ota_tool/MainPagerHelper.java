@@ -38,6 +38,10 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 import static inshow.carl.com.ota_tool.tools.Const.FILE_SELECT_CODE;
+import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_TRUE;
+import static inshow.carl.com.ota_tool.tools.Const.STATE_FAIL;
+import static inshow.carl.com.ota_tool.tools.Const.STATE_INIT;
+import static inshow.carl.com.ota_tool.tools.Const.STATE_PROCESSING;
 import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_AGAIN;
 import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_DELETE;
 import static inshow.carl.com.ota_tool.tools.Utils.getIncrementedAddress;
@@ -51,14 +55,16 @@ import static inshow.carl.com.ota_tool.tools.Utils.getIncrementedAddress;
 
 public class MainPagerHelper {
 
+    private static final String TAG = "MainActivity";
+    private static boolean hasFound = false;
 
     public static void handleChooseFile(Context c, Intent data, TextView filePath) {
         Uri uri = data.getData();
-        Log.d("OTA", "File Uri: " + uri.toString());
+        Log.d("MainActivity", "File Uri: " + uri.toString());
         String path = null;
         try {
             path = Utils.getPath(c, uri);
-            Log.d("OTA:", "File Path: " + path);
+            Log.d("MainActivity", "File Path: " + path);
             if (null != path) {
                 final File file = new File(path);
                 filePath.setText(path);
@@ -124,7 +130,7 @@ public class MainPagerHelper {
                             .setWidth(width)
                             .setHeight(height);
                     swipeRightMenu.addMenuItem(deleteItem);// 添加菜单到右侧。
-                }else if(viewType == VIEW_TYPE_AGAIN){
+                } else if (viewType == VIEW_TYPE_AGAIN) {
                     SwipeMenuItem deleteItem = new SwipeMenuItem(context)
                             .setBackground(R.drawable.selector_blue)
                             .setText("重试")
@@ -132,61 +138,32 @@ public class MainPagerHelper {
                             .setWidth(width)
                             .setHeight(height);
                     swipeRightMenu.addMenuItem(deleteItem);// 添加菜单到右侧。
-                }else {
+                } else {
 
                 }
             }
         };
     }
 
-    public static void startScan(final String mac, final BluetoothLeService mBluetoothLeService) {
-        Log.d("OTA:", "startScan");
-        final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
-        final ScanCallback callback = new ScanCallback() {
+    public static void startScan(MainAdapter mAdapter, final String mac, final BluetoothLeService mBluetoothLeService) {
+        int currentPos = mAdapter.getCurrentPos();
+        mAdapter.getItem(currentPos).state = STATE_PROCESSING;
+        mAdapter.getItem(currentPos).process = PROCESS_INDETERMINATE_TRUE;
+        mAdapter.notifyItemChanged(currentPos);
+        Log.d("MainActivity", "startScan,current position:" + currentPos);
+        scanFoundHandle(mac, new IScanHelper() {
             @Override
-            public void onScanFailed(int errorCode) {
-                super.onScanFailed(errorCode);
-                Log.d("OTA:", "onScanFailed");
-            }
-
-            @Override
-            public void onScanResult(int callbackType, ScanResult result) {
-                super.onScanResult(callbackType, result);
-                Log.d("OTA:", "onScanResult");
-            }
-
-            @Override
-            public void onBatchScanResults(List<ScanResult> results) {
-                Log.d("OTA:", "onBatchScanResults");
-                for (ScanResult item : results) {
-                    if (item.getDevice().getAddress().toUpperCase().equals(mac.toUpperCase())) {
-                        Log.d("OTA:", "item.getDevice().getAddress().toUpperCase().equals(selectMac)");
-
-                    }
-                }
-            }
-        };
-        final ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(1000).setUseHardwareBatchingIfSupported(false).build();
-        final List<ScanFilter> filters = new ArrayList<>();
-        filters.add(new ScanFilter.Builder().setServiceUuid(null).build());
-        scanner.startScan(filters, settings, callback);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("OTA:", "stopScan Runnable");
-                //stop
+            public void deviceFound() {
                 if (null != mBluetoothLeService) {
-                    Log.d("OTA:", "mBluetoothLeService connect");
+                    Log.d(TAG, "mBluetoothLeService connect");
                     mBluetoothLeService.connect(mac);
                 }
-                scanner.stopScan(callback);
             }
-        }, 5000);
+        });
     }
 
 
-    public static SwipeMenuItemClickListener getSwipeMenuItemClickListener(final Context c, final int curerntPos, final MainAdapter mAdapter) {
+    public static SwipeMenuItemClickListener getSwipeMenuItemClickListener(final Context c,  final MainAdapter mAdapter) {
         return new SwipeMenuItemClickListener() {
             @Override
             public void onItemClick(SwipeMenuBridge menuBridge) {
@@ -196,11 +173,17 @@ public class MainPagerHelper {
                 int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
                 if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
                     if (menuPosition == 0) {
-                        if (curerntPos != adapterPosition) {
+                        if (mAdapter.getItem(adapterPosition).state == STATE_INIT) {
                             mAdapter.removeAtNotify(adapterPosition);
                             Toast.makeText(c, "删除成功 (●’◡’●)", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(c, "正在升级中，不能删除(￢_￢)", Toast.LENGTH_LONG).show();
+                        }else {
+                            if(canUpgradeAgain(mAdapter)) {
+                                if(mAdapter.getItem(adapterPosition).state == STATE_FAIL) {
+                                    Toast.makeText(c, "功能开发中(●’◡’●)", Toast.LENGTH_LONG).show();
+                                }
+                            }else{
+                                Toast.makeText(c, "任务还未执行完成，不能重新升级(●’◡’●)", Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 }
@@ -208,29 +191,54 @@ public class MainPagerHelper {
         };
     }
 
+    public static  boolean canUpgradeAgain( final MainAdapter mAdapter){
+        return mAdapter.getCurrentPos() == mAdapter.getItemCount() -1 ;
+    }
+
+
     public static void startOTA(final Context context, final String mac) {
-        Log.d("OTA:", "startOTA");
+        Log.d("MainActivity", "starOTA");
+        scanFoundHandle(mac, new IScanHelper() {
+            @Override
+            public void deviceFound() {
+                final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
+                final FileEntity f = FileEntity.last(FileEntity.class);
+                final DfuServiceInitiator starter = new DfuServiceInitiator(getIncrementedAddress(mac))
+                        .setDisableNotification(true)//need't Notification Act
+                        .setKeepBond(false)
+                        .setDeviceName("DFU")
+                        .setZip(f.filePath);
+                starter.start(context, DfuService.class);
+            }
+        });
+
+    }
+
+
+    public static void scanFoundHandle(final String mac, final IScanHelper helper) {
         final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
         final ScanCallback callback = new ScanCallback() {
             @Override
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
-                Log.d("OTA:", "onScanFailed");
+                Log.d("MainActivity", "  onScanFailed");
             }
 
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
-                Log.d("OTA:", "onScanResult");
+                Log.d("MainActivity", "  onScanResult");
             }
 
             @Override
             public void onBatchScanResults(List<ScanResult> results) {
-                Log.d("OTA:", "onBatchScanResults");
+                Log.d("MainActivity", "  onBatchScanResults");
                 for (ScanResult item : results) {
                     if (item.getDevice().getAddress().toUpperCase().equals(mac.toUpperCase())) {
-                        Log.d("OTA:", "item.getDevice().getAddress().toUpperCase().equals(selectMac)");
-
+                        Log.d(TAG, "  onBatchScanResults equals ");
+                        hasFound = true;
+                        helper.deviceFound();
+                        break;
                     }
                 }
             }
@@ -243,19 +251,19 @@ public class MainPagerHelper {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                final FileEntity f = FileEntity.last(FileEntity.class);
-                final DfuServiceInitiator starter = new DfuServiceInitiator(getIncrementedAddress(mac))
-                        .setDisableNotification(true)//need't Notification Act
-                        .setKeepBond(false)
-                        .setDeviceName("DFU")
-                        .setZip(f.filePath);
-                starter.start(context, DfuService.class);
                 scanner.stopScan(callback);
+                if (!hasFound) {
+                    helper.deviceFound();
+                }
+                hasFound = false;
             }
-        }, 1000);
+        }, 5000);
 
     }
 
+    public interface IScanHelper {
+        void deviceFound();
+    }
 
 }
 

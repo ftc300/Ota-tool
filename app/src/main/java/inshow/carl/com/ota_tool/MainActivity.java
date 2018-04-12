@@ -29,9 +29,6 @@ import android.widget.Toast;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -55,12 +52,12 @@ import static inshow.carl.com.ota_tool.tools.Const.ARG_MAC;
 import static inshow.carl.com.ota_tool.tools.Const.FILE_SELECT_CODE;
 import static inshow.carl.com.ota_tool.tools.Const.PERMISSION_REQ;
 import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_FALSE;
-import static inshow.carl.com.ota_tool.tools.Const.PROCESS_INDETERMINATE_TRUE;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_FAIL;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_INIT;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_PROCESSING;
 import static inshow.carl.com.ota_tool.tools.Const.STATE_SUCCESS;
 import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_AGAIN;
+import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_DELETE;
 import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_NONE;
 import static inshow.carl.com.ota_tool.tools.Utils.checkBleAdapter;
 import static inshow.carl.com.ota_tool.tools.Utils.showExitD;
@@ -81,7 +78,6 @@ public class MainActivity extends BasicAct implements TextWatcher {
     @InjectView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
     protected MainAdapter mAdapter;
-    protected List<DeviceEntity> mDataList = new ArrayList<>();
     @InjectView(R.id.ll_input_type)
     LinearLayout llInputType;
     @InjectView(R.id.ll_scan_type)
@@ -90,9 +86,6 @@ public class MainActivity extends BasicAct implements TextWatcher {
     EditText et;
     LinearLayoutManager linearLayoutManager;
     private BluetoothLeService mBluetoothLeService;
-    private int currentPos = 0;
-    private DeviceEntity currentDeviceEntity;
-    private int taskState = STATE_INIT;
     private int intoDfuFlag = 0;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -104,7 +97,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            if(!TextUtils.isEmpty(getCurrentMac())) {
+            if (!TextUtils.isEmpty(getCurrentMac())) {
                 Log.d(TAG, "onServiceConnected  " + getCurrentMac());
                 mBluetoothLeService.connect(getCurrentMac());
             }
@@ -125,9 +118,14 @@ public class MainActivity extends BasicAct implements TextWatcher {
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d(TAG, getCurrentMac() + " Disconnected");
                 mBluetoothLeService.disconnect();
-                if(intoDfuFlag >0 ) {
+                if (intoDfuFlag > 0) {
                     startOTA(context, getCurrentMac());
                     intoDfuFlag = 0;
+                }else {
+                    //connec fail
+                    upgradeFail();
+                    Toast.makeText(context, "未发现该设备,请确认该设备可用(￢_￢)", Toast.LENGTH_LONG).show();
+
                 }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 Log.d(TAG, getCurrentMac() + " Services Discovered");
@@ -139,53 +137,64 @@ public class MainActivity extends BasicAct implements TextWatcher {
         }
     };
 
+    private void upgradeFail() {
+        int pos = mAdapter.getCurrentPos();
+        writeData2SD(mAdapter.getItem(pos));
+        mAdapter.getItem(pos).state = STATE_FAIL;
+        mAdapter.notifyItemChanged(pos);
+        if (pos < mAdapter.getItemCount() - 1 ) {
+            mAdapter.setCurrentPos(pos + 1);
+            startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
+        }
+    }
+
 
     private final DfuProgressListener mDfuProgressListener = new DfuProgressListenerAdapter() {
         private int mPercent;
 
         @Override
+        public void onDfuProcessStarting(String deviceAddress) {
+            super.onDfuProcessStarting(deviceAddress);
+        }
+
+        @Override
         public void onDeviceDisconnecting(final String deviceAddress) {
-            Log.e(TAG,"onDeviceDisconnecting");
+            Log.e(TAG, "onDeviceDisconnecting");
             if (mPercent < 100) {
-                currentDeviceEntity = mAdapter.getItem(currentPos);
-                currentDeviceEntity.state = STATE_FAIL;
-                mAdapter.notifyItemChanged(currentPos);
-                writeData2SD(currentDeviceEntity);
-                currentPos++;
-                if (currentPos < mAdapter.getItemCount()) {
-                    startScan(getCurrentMac(), mBluetoothLeService);
-                }
+                upgradeFail();
             }
         }
 
         @Override
         public void onDfuCompleted(final String deviceAddress) {
-            Log.e(TAG,"onDfuCompleted");
-            currentDeviceEntity = mAdapter.getItem(currentPos);
-            currentDeviceEntity.state = STATE_SUCCESS;
-            mAdapter.notifyItemChanged(currentPos);
-            writeData2SD(currentDeviceEntity);
-            if (currentPos < mAdapter.getItemCount() - 2) {
-                currentPos++;
-                startScan(getCurrentMac(), mBluetoothLeService);
+            Log.e(TAG, "onDfuCompleted");
+            int pos = mAdapter.getCurrentPos();
+            writeData2SD(mAdapter.getItem(mAdapter.getCurrentPos()));
+            mAdapter.getItem(mAdapter.getCurrentPos()).state = STATE_SUCCESS;
+            mAdapter.notifyItemChanged(pos);
+            if (pos < mAdapter.getItemCount() - 1) {
+                Log.e(TAG, "onDfuCompleted next start");
+                mAdapter.setCurrentPos(pos + 1);
+                startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
             }
         }
 
         @Override
-        public void onProgressChanged(final String deviceAddress, final int percent, final float speed, final float avgSpeed, final int currentPart, final int partsTotal){
-            Log.d(TAG,"onProgressChanged" + percent);
+        public void onProgressChanged(final String deviceAddress, final int percent, final float speed, final float avgSpeed, final int currentPart, final int partsTotal) {
+            Log.d(TAG, "onProgressChanged" + percent);
             mPercent = percent;
-            currentDeviceEntity = mAdapter.getItem(currentPos);
-            currentDeviceEntity.state = STATE_PROCESSING;
-            currentDeviceEntity.process = mPercent;
-            mAdapter.notifyItemChanged(currentPos);
+            mAdapter.getItem(mAdapter.getCurrentPos()).state = STATE_PROCESSING;
+            mAdapter.getItem(mAdapter.getCurrentPos()).process = mPercent;
+            mAdapter.notifyItemChanged(mAdapter.getCurrentPos());
         }
 
         @Override
         public void onError(final String deviceAddress, final int error, final int errorType, final String message) {
-            currentDeviceEntity = mAdapter.getItem(currentPos);
-            currentDeviceEntity.state = STATE_FAIL;
-            mAdapter.notifyItemChanged(currentPos);
+//            mAdapter.getItem(mAdapter.getCurrentPos()).state = STATE_FAIL;
+//            mAdapter.notifyItemChanged(mAdapter.getCurrentPos());
+            if (mPercent < 100) {
+                upgradeFail();
+            }
         }
     };
 
@@ -250,9 +259,11 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private String getCurrentMac() {
-        currentDeviceEntity = mAdapter.getItem(currentPos);
-        if (null != currentDeviceEntity)
-            return currentDeviceEntity.getTrueMac();
+        if (null != mAdapter.getItem(mAdapter.getCurrentPos())) {
+            int pos = mAdapter.getCurrentPos();
+            Log.d("current position:",pos + "");
+            return mAdapter.getItem(pos).getTrueMac();
+        }
         return "";
     }
 
@@ -313,17 +324,14 @@ public class MainActivity extends BasicAct implements TextWatcher {
         //        String mac, int process, int state, long timestamp
         DeviceEntity entity = new DeviceEntity(mac, PROCESS_INDETERMINATE_FALSE, STATE_INIT, filePath.getText().toString());
         if (!hasAddDevice(entity)) {
-            mDataList.add(entity);
-            mAdapter.notifyDataSetChanged(mDataList);
-            if (isFirstItem()) {
-                findViewById(R.id.header).setVisibility(View.VISIBLE);
-            }
-            if(!isProcessing()){
-                currentDeviceEntity = mAdapter.getItem(currentPos);
-                currentDeviceEntity.state = STATE_PROCESSING;
-                currentDeviceEntity.process = PROCESS_INDETERMINATE_TRUE;
-                mAdapter.notifyItemChanged(currentPos);
-                startScan(getCurrentMac(), mBluetoothLeService);
+            mAdapter.addNotify(entity);
+            if (!isProcessing()) {
+                if (isFirstItem()) {
+                    findViewById(R.id.header).setVisibility(View.VISIBLE);
+                } else {
+                    mAdapter.setCurrentPos(mAdapter.getCurrentPos() + 1);
+                }
+                startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
             }
             showToast("添加成功 (●’◡’●)");
         } else {
@@ -332,7 +340,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private boolean hasAddDevice(DeviceEntity entity) {
-        for (DeviceEntity item : mDataList) {
+        for (DeviceEntity item : mAdapter.getDataList()) {
             if (item.mac.toUpperCase().equals(entity.mac.toUpperCase())) {
                 return true;
             }
@@ -341,29 +349,32 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private boolean isFirstItem() {
-        return mDataList.size() == 1;
+        return mAdapter.getDataList().size() == 1;
     }
 
     private void initSwipe() {
-        mAdapter = new MainAdapter(this){
+        mAdapter = new MainAdapter(this) {
             @Override
             public int getItemViewType(int position) {
-                currentDeviceEntity = getItem(position);
-                if(null!=currentDeviceEntity) {
-                    if (currentDeviceEntity.state == STATE_SUCCESS || currentDeviceEntity.state == STATE_PROCESSING)  return VIEW_TYPE_NONE;
-                    else if (currentDeviceEntity.state == STATE_FAIL) return VIEW_TYPE_AGAIN;
-                    else if (currentDeviceEntity.state == STATE_INIT ) return VIEW_TYPE_NONE;
+                if (null != mAdapter.getItem(position)) {
+                    if (mAdapter.getItem(position).state == STATE_SUCCESS || mAdapter.getItem(position).state == STATE_PROCESSING)
+                        return VIEW_TYPE_NONE;
+                    else if (mAdapter.getItem(position).state == STATE_FAIL)
+                        return VIEW_TYPE_AGAIN;
+                    else if (mAdapter.getItem(position).state == STATE_INIT)
+                        return VIEW_TYPE_DELETE;
                 }
                 return VIEW_TYPE_NONE;
             }
         };
+        mAdapter.setCurrentPos(0);
         linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.addItemDecoration(new DefaultItemDecoration(ContextCompat.getColor(this, R.color.divider_color)));
         mRecyclerView.setSwipeMenuCreator(getSwipeMenuCreator(context));
-        mRecyclerView.setSwipeMenuItemClickListener(getSwipeMenuItemClickListener(context, currentPos, mAdapter));
+        mRecyclerView.setSwipeMenuItemClickListener(getSwipeMenuItemClickListener(context, mAdapter));
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged(mDataList);
+        mRecyclerView.getItemAnimator().setChangeDuration(0);
     }
 
     @Override
@@ -387,16 +398,17 @@ public class MainActivity extends BasicAct implements TextWatcher {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         showExitD(context);
     }
 
 
-    private boolean isProcessing(){
-        currentDeviceEntity = mAdapter.getItem(currentPos);
-        if (null != currentDeviceEntity)
-            return currentDeviceEntity.state == STATE_PROCESSING;
+    private boolean isProcessing() {
+        if (null != mAdapter.getItem(mAdapter.getCurrentPos()))
+            return mAdapter.getItem(mAdapter.getCurrentPos()).state == STATE_PROCESSING;
         return false;
     }
+
+
+
 
 }

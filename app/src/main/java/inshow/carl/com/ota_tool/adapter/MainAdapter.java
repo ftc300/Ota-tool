@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import inshow.carl.com.ota_tool.R;
@@ -42,8 +43,17 @@ import static inshow.carl.com.ota_tool.tools.Const.STATE_SUCCESS;
  */
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private List<DeviceEntity> mDataList;
+    private List<DeviceEntity> mDataList = new ArrayList<>();
     private Context context;
+    private int currentPos ;
+
+    public void setCurrentPos(int currentPos) {
+        this.currentPos = currentPos;
+    }
+
+    public int getCurrentPos(){
+        return currentPos;
+    }
 
     public  MainAdapter(Context context) {
         this.context = context;
@@ -52,6 +62,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public void notifyDataSetChanged(List<DeviceEntity> dataList) {
         this.mDataList = dataList;
         super.notifyDataSetChanged();
+    }
+
+    public List<DeviceEntity> getDataList(){
+        return mDataList;
     }
 
     public void removeAtNotify(int pos) {
@@ -83,7 +97,36 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setData(getItem(position));
+        DeviceEntity  entity = getItem(position);
+        holder.tvTitle.setText(entity.mac);
+        if(entity.state == STATE_PROCESSING){
+            holder.pb.setVisibility(View.VISIBLE);
+            if(entity.process == PROCESS_INDETERMINATE_TRUE){
+                holder.pb.setIndeterminate(true);
+                holder.tvResult.setText("init");
+            }else if (entity.process == PROCESS_INDETERMINATE_FALSE) {
+                holder.pb.setIndeterminate(false);
+            }else if(entity.process<=100 && entity.process >=0){
+                holder.pb.setIndeterminate(false);
+                holder.pb.setProgress(entity.process);
+                holder.tvResult.setText(entity.process + "%");
+            }
+            holder.imgState.setVisibility(View.GONE);
+        }else if(entity.state == STATE_FAIL){
+            holder.pb.setVisibility(View.GONE);
+            holder.imgState.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.fail));
+            holder.imgState.setVisibility(View.VISIBLE);
+            holder.tvResult.setText("fail");
+        }else if(entity.state == STATE_SUCCESS){
+            holder.imgState.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.success));
+            holder.imgState.setVisibility(View.VISIBLE);
+            holder.pb.setVisibility(View.GONE);
+            holder.tvResult.setText("done");
+        } else if(entity.state == STATE_INIT){
+            holder.imgState.setVisibility(View.GONE);
+            holder.pb.setVisibility(View.GONE);
+            holder.tvResult.setText("");
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -101,37 +144,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             imgState = (ImageView) itemView.findViewById(R.id.img_state);
         }
 
-        public void setData(DeviceEntity entity) {
-            this.tvTitle.setText(entity.mac);
-            if(entity.state == STATE_PROCESSING){
-                pb.setVisibility(View.VISIBLE);
-                if(entity.process == PROCESS_INDETERMINATE_TRUE){
-                    pb.setIndeterminate(true);
-                    tvResult.setText("init");
-                }else if (entity.process == PROCESS_INDETERMINATE_FALSE) {
-                    pb.setIndeterminate(false);
-                }else if(entity.process<=100 && entity.process >=0){
-                    pb.setIndeterminate(false);
-                    pb.setProgress(entity.process);
-                    tvResult.setText(entity.process + "%");
-                }
-                imgState.setVisibility(View.GONE);
-            }else if(entity.state == STATE_FAIL){
-                pb.setVisibility(View.GONE);
-                imgState.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.fail));
-                imgState.setVisibility(View.VISIBLE);
-                tvResult.setText("fail");
-            }else if(entity.state == STATE_SUCCESS){
-                imgState.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.success));
-                imgState.setVisibility(View.VISIBLE);
-                pb.setVisibility(View.GONE);
-                tvResult.setText("done");
-            } else if(entity.state == STATE_INIT){
-                imgState.setVisibility(View.GONE);
-                pb.setVisibility(View.GONE);
-            }
-
-        }
     }
 
 
