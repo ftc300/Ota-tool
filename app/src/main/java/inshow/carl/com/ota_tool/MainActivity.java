@@ -60,6 +60,7 @@ import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_AGAIN;
 import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_DELETE;
 import static inshow.carl.com.ota_tool.tools.Const.VIEW_TYPE_NONE;
 import static inshow.carl.com.ota_tool.tools.Utils.checkBleAdapter;
+import static inshow.carl.com.ota_tool.tools.Utils.getLocalVersionName;
 import static inshow.carl.com.ota_tool.tools.Utils.showExitD;
 import static inshow.carl.com.ota_tool.tools.Utils.writeData2SD;
 
@@ -75,6 +76,8 @@ public class MainActivity extends BasicAct implements TextWatcher {
     TextView filePath;
     @InjectView(R.id.more)
     TextView more;
+    @InjectView(R.id.bar_version)
+    TextView version;
     @InjectView(R.id.recycler_view)
     SwipeMenuRecyclerView mRecyclerView;
     protected MainAdapter mAdapter;
@@ -82,8 +85,12 @@ public class MainActivity extends BasicAct implements TextWatcher {
     LinearLayout llInputType;
     @InjectView(R.id.ll_scan_type)
     LinearLayout llScanType;
+    @InjectView(R.id.ll_gun_type)
+    LinearLayout llGunType;
     @InjectView(R.id.et_input_mac)
     EditText et;
+    @InjectView(R.id.et_gun_mac)
+    EditText etGun;
     LinearLayoutManager linearLayoutManager;
     private BluetoothLeService mBluetoothLeService;
     private int intoDfuFlag = 0;
@@ -125,7 +132,6 @@ public class MainActivity extends BasicAct implements TextWatcher {
                     //connec fail
                     upgradeFail();
                     Toast.makeText(context, "未发现该设备,请确认该设备可用(￢_￢)", Toast.LENGTH_LONG).show();
-
                 }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 Log.d(TAG, getCurrentMac() + " Services Discovered");
@@ -139,9 +145,9 @@ public class MainActivity extends BasicAct implements TextWatcher {
 
     private void upgradeFail() {
         int pos = mAdapter.getCurrentPos();
-        writeData2SD(mAdapter.getItem(pos));
         mAdapter.getItem(pos).state = STATE_FAIL;
         mAdapter.notifyItemChanged(pos);
+        writeData2SD(mAdapter.getItem(pos));
         if (pos < mAdapter.getItemCount() - 1 ) {
             mAdapter.setCurrentPos(pos + 1);
             startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
@@ -169,9 +175,9 @@ public class MainActivity extends BasicAct implements TextWatcher {
         public void onDfuCompleted(final String deviceAddress) {
             Log.e(TAG, "onDfuCompleted");
             int pos = mAdapter.getCurrentPos();
-            writeData2SD(mAdapter.getItem(mAdapter.getCurrentPos()));
             mAdapter.getItem(mAdapter.getCurrentPos()).state = STATE_SUCCESS;
             mAdapter.notifyItemChanged(pos);
+            writeData2SD(mAdapter.getItem(mAdapter.getCurrentPos()));
             if (pos < mAdapter.getItemCount() - 1) {
                 Log.e(TAG, "onDfuCompleted next start");
                 mAdapter.setCurrentPos(pos + 1);
@@ -217,6 +223,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
         });
         loadFileInfo(filePath);
         et.addTextChangedListener(this);
+        version.setText("V"+getLocalVersionName(context));
         btnInputSure.setEnabled(getBtnInputSureUsed());
         checkBleAdapter(this);
         initSwipe();
@@ -286,16 +293,24 @@ public class MainActivity extends BasicAct implements TextWatcher {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_camera:
+                        llGunType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.GONE);
                         llScanType.setVisibility(View.VISIBLE);
                         break;
-                    case R.id.menu_gun:
+                    case R.id.menu_man:
+                        llGunType.setVisibility(View.GONE);
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.VISIBLE);
                         break;
                     case R.id.menu_log:
+                        llGunType.setVisibility(View.GONE);
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.GONE);
+                        break;
+                    case R.id.menu_gun:
+                        llScanType.setVisibility(View.GONE);
+                        llInputType.setVisibility(View.GONE);
+                        llGunType.setVisibility(View.VISIBLE);
                         break;
                     default:
                         break;
@@ -317,6 +332,18 @@ public class MainActivity extends BasicAct implements TextWatcher {
     @OnClick(R.id.btn_input_sure)
     public void InputSure() {
         addDevice2List(et.getText().toString().toUpperCase());
+    }
+
+    @OnClick(R.id.btn_gun_sure)
+    public void GunSure() {
+        try {
+            String mac = etGun.getText().toString().toUpperCase().split("-")[1];
+            addDevice2List(mac);
+            etGun.setText("");
+        }catch (Exception e){
+            showToast("解析有误，添加失败(￢_￢)");
+            e.printStackTrace();
+        }
     }
 
     private void addDevice2List(String mac) {

@@ -21,7 +21,7 @@ public class DeviceEntity extends SugarRecord {
     public String getTrueMac() {
         if (TextUtils.isEmpty(mac))
             return "";
-        return Utils.formateMac(mac);
+        return Utils.formatMac(mac);
     }
 
     public DeviceEntity() {

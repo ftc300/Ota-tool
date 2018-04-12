@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -64,7 +66,7 @@ public class Utils {
     }
 
     // 705896002EC2
-    public static String formateMac(String content) {
+    public static String formatMac(String content) {
         StringBuffer result = new StringBuffer(content);
         try {
             for (int index = 2; index < result.length(); index += 3) {
@@ -167,7 +169,7 @@ public class Utils {
     public static void showExitD(final Context c) {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(c)
-                        .setMessage("确定退出吗？").setPositiveButton("确定",
+                        .setMessage("退出可能导致固件升级故障，确定退出吗？").setPositiveButton("确定",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -183,5 +185,17 @@ public class Utils {
         normalDialog.show();
     }
 
+    public static String getLocalVersionName(Context ctx) {
+        String localVersion = "";
+        try {
+            PackageInfo packageInfo = ctx.getApplicationContext()
+                    .getPackageManager()
+                    .getPackageInfo(ctx.getPackageName(), 0);
+            localVersion = packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return localVersion;
+    }
 
 }

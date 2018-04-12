@@ -19,12 +19,25 @@
             android:id="@+id/bar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="top|center_horizontal"
             android:ellipsize="end"
             android:maxLines="1"
+            android:paddingTop="8dp"
             android:text="INSHOW OTA"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/bar_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="v1.0.0"
+            android:paddingBottom="8dp"
+            android:textColor="@color/headerTextColor"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/more"
@@ -130,6 +143,40 @@
             android:textColor="@color/white" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_gun_type"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_gun_mac"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/edit_bg"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"
+            android:textSize="13sp"
+            android:text="16023/213G0460-7058960002C4"
+            android:layout_weight="1"
+            android:maxLength="27" />
+
+        <Button
+            android:id="@+id/btn_gun_sure"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_bg"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:text="确认添加"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/ll_scan_type"
