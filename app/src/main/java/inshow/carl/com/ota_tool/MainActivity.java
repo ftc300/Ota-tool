@@ -223,6 +223,40 @@ public class MainActivity extends BasicAct implements TextWatcher {
         });
         loadFileInfo(filePath);
         et.addTextChangedListener(this);
+        etGun.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String scanText = etGun.getText().toString();
+                if(TextUtils.isEmpty(filePath.getText().toString())){
+                    showToast("请先选择固件(￢_￢)");
+                    return;
+                }
+
+                if(!TextUtils.isEmpty(scanText)&&scanText.length() == 27){
+                    try {
+                        String mac = etGun.getText().toString().toUpperCase().split("-")[1];
+                        addDevice2List(mac);
+                        etGun.requestFocus();
+                        etGun.setText("");
+                        etGun.setSelection(0);
+                    }catch (Exception e){
+                        showToast("解析有误，添加失败(￢_￢)");
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
         version.setText("V"+getLocalVersionName(context));
         btnInputSure.setEnabled(getBtnInputSureUsed());
         checkBleAdapter(this);
@@ -301,6 +335,9 @@ public class MainActivity extends BasicAct implements TextWatcher {
                         llGunType.setVisibility(View.GONE);
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.VISIBLE);
+                        et.requestFocus();
+                        et.setText("");
+                        et.setSelection(0);
                         break;
                     case R.id.menu_log:
                         llGunType.setVisibility(View.GONE);
@@ -311,6 +348,9 @@ public class MainActivity extends BasicAct implements TextWatcher {
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.GONE);
                         llGunType.setVisibility(View.VISIBLE);
+                        etGun.requestFocus();
+                        etGun.setText("");
+                        etGun.setSelection(0);
                         break;
                     default:
                         break;

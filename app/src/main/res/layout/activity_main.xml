@@ -126,7 +126,7 @@
             android:layout_marginRight="20dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="705896003CA0"
+            android:text=""
             android:digits="0123456789abcdefABCDEF"
             android:maxLength="12" />
 
@@ -145,8 +145,8 @@
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/ll_gun_type"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:orientation="horizontal">
@@ -159,12 +159,14 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_gravity="center"
-            android:textSize="13sp"
-            android:text="16023/213G0460-7058960002C4"
+            android:textSize="15sp"
+            android:text=""
+            android:cursorVisible="true"
             android:layout_weight="1"
             android:maxLength="27" />
 
         <Button
+            android:visibility="gone"
             android:id="@+id/btn_gun_sure"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
