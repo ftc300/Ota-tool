@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -196,6 +197,15 @@ public class Utils {
             e.printStackTrace();
         }
         return localVersion;
+    }
+
+    public static  void openLogFolder(Activity a)
+    {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/0-inshow-ota/");
+        intent.setDataAndType(uri, "text/csv");
+        a.startActivity(Intent.createChooser(intent, "Open folder"));
     }
 
 }

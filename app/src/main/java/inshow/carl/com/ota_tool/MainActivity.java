@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -223,6 +224,8 @@ public class MainActivity extends BasicAct implements TextWatcher {
         });
         loadFileInfo(filePath);
         et.addTextChangedListener(this);
+        et.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        etGun.setImeOptions(EditorInfo.IME_ACTION_DONE);
         etGun.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -343,6 +346,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                         llGunType.setVisibility(View.GONE);
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.GONE);
+//                        openLogFolder((Activity) context);
                         break;
                     case R.id.menu_gun:
                         llScanType.setVisibility(View.GONE);

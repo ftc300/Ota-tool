@@ -127,7 +127,10 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text=""
+            android:hint="请输入设备mac地址"
             android:digits="0123456789abcdefABCDEF"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
             android:maxLength="12" />
 
         <Button
@@ -161,7 +164,8 @@
             android:layout_gravity="center"
             android:textSize="15sp"
             android:text=""
-            android:cursorVisible="true"
+            android:hint="请扫描输入"
+            android:inputType="textEmailAddress"
             android:layout_weight="1"
             android:maxLength="27" />
 

@@ -221,7 +221,7 @@ public class MainPagerHelper {
             @Override
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
-                Log.d("MainActivity", "  onScanFailed");
+                Log.d("MainActivity", "  onScanFailed :" + errorCode);
             }
 
             @Override
