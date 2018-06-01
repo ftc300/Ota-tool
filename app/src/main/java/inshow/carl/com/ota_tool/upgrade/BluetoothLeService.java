@@ -274,13 +274,13 @@ public class BluetoothLeService extends Service {
             Log.e(TAG, "char not found!");
             return false;
         }
-        charac.setValue(writeBytes());
+        charac.setValue(getDfuWriteBytes());
         boolean status = mBluetoothGatt.writeCharacteristic(charac);
         return status;
     }
 
 
-    public static byte[] writeBytes() {
+    public static byte[] getDfuWriteBytes() {
         int[] value = new int[]{5,0,0,0};
         byte[] src = new byte[4];
         src[3] = (byte) (value[3] & 0x0FF);

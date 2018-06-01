@@ -145,7 +145,8 @@ public class MainPagerHelper {
         };
     }
 
-    public static void startScan(MainAdapter mAdapter, final String mac, final BluetoothLeService mBluetoothLeService) {
+    public static void startScan(DaemonManager manager,MainAdapter mAdapter, final String mac, final BluetoothLeService mBluetoothLeService) {
+        manager.start();
         int currentPos = mAdapter.getCurrentPos();
         mAdapter.getItem(currentPos).state = STATE_PROCESSING;
         mAdapter.getItem(currentPos).process = PROCESS_INDETERMINATE_TRUE;

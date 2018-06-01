@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +18,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -40,6 +42,7 @@ import no.nordicsemi.android.dfu.DfuProgressListener;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
 
+import static inshow.carl.com.ota_tool.DaemonManager.ProcessEnums.DFU_PROCESSING;
 import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuCreator;
 import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuItemClickListener;
 import static inshow.carl.com.ota_tool.MainPagerHelper.handleChooseFile;
@@ -95,6 +98,20 @@ public class MainActivity extends BasicAct implements TextWatcher {
     LinearLayoutManager linearLayoutManager;
     private BluetoothLeService mBluetoothLeService;
     private int intoDfuFlag = 0;
+    private SparseArray<Integer> processArray = new SparseArray();
+    private Handler handler = new Handler();
+
+    DaemonManager manager = new DaemonManager(new DaemonManager.IDaemonProcess() {
+        @Override
+        public void onFail(int currentPos) {
+            Log.d(TAG,"onFail");
+            //取消升级过程
+            if(currentPos == mAdapter.getCurrentPos()) {
+                mBluetoothLeService.disconnect();
+                upgradeFail();
+            }
+        }
+    });
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -144,6 +161,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
         }
     };
 
+
     private void upgradeFail() {
         int pos = mAdapter.getCurrentPos();
         mAdapter.getItem(pos).state = STATE_FAIL;
@@ -151,7 +169,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
         writeData2SD(mAdapter.getItem(pos));
         if (pos < mAdapter.getItemCount() - 1 ) {
             mAdapter.setCurrentPos(pos + 1);
-            startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
+            startScan(manager,mAdapter, getCurrentMac(), mBluetoothLeService);
         }
     }
 
@@ -162,6 +180,15 @@ public class MainActivity extends BasicAct implements TextWatcher {
         @Override
         public void onDfuProcessStarting(String deviceAddress) {
             super.onDfuProcessStarting(deviceAddress);
+            Log.d(TAG,"onDfuProcessStarting");
+        }
+
+        @Override
+        public void onDeviceConnected(String deviceAddress) {
+            super.onDeviceConnected(deviceAddress);
+            Log.d(TAG,"onDeviceConnected;");
+            processArray.put(mAdapter.getCurrentPos(), DFU_PROCESSING);
+            manager.notifyStateChange(processArray);
         }
 
         @Override
@@ -182,7 +209,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
             if (pos < mAdapter.getItemCount() - 1) {
                 Log.e(TAG, "onDfuCompleted next start");
                 mAdapter.setCurrentPos(pos + 1);
-                startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
+                startScan(manager,mAdapter, getCurrentMac(), mBluetoothLeService);
             }
         }
 
@@ -203,6 +230,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 upgradeFail();
             }
         }
+
     };
 
     @Override
@@ -210,6 +238,13 @@ public class MainActivity extends BasicAct implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+        //test
+//        manager.start(handler);
+//        manager.setCurrentKey(0);
+//        processArray.put(0,0);
+//        manager.notifyStateChange(processArray);
+
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -311,6 +346,8 @@ public class MainActivity extends BasicAct implements TextWatcher {
         return "";
     }
 
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -347,6 +384,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.GONE);
 //                        openLogFolder((Activity) context);
+                        testAdd();
                         break;
                     case R.id.menu_gun:
                         llScanType.setVisibility(View.GONE);
@@ -390,6 +428,14 @@ public class MainActivity extends BasicAct implements TextWatcher {
         }
     }
 
+    void testAdd(){
+        addDevice2List("7058960002C4");
+        addDevice2List("705896003CA0");
+        addDevice2List("7058960002C9");
+        addDevice2List("705896000864");
+        addDevice2List("7058960094C8");
+    }
+
     private void addDevice2List(String mac) {
         if (TextUtils.isEmpty(mac)) return;
         //        String mac, int process, int state, long timestamp
@@ -402,13 +448,14 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 } else {
                     mAdapter.setCurrentPos(mAdapter.getCurrentPos() + 1);
                 }
-                startScan(mAdapter, getCurrentMac(), mBluetoothLeService);
+                startScan(manager,mAdapter, getCurrentMac(), mBluetoothLeService);
             }
             showToast("添加成功 (●’◡’●)");
         } else {
             Toast.makeText(context, "已经在列表中，请勿重复添加，已经为您忽略该操作(￢_￢)", Toast.LENGTH_LONG).show();
         }
     }
+
 
     private boolean hasAddDevice(DeviceEntity entity) {
         for (DeviceEntity item : mAdapter.getDataList()) {
@@ -424,7 +471,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private void initSwipe() {
-        mAdapter = new MainAdapter(this) {
+        mAdapter = new MainAdapter(this,manager) {
             @Override
             public int getItemViewType(int position) {
                 if (null != mAdapter.getItem(position)) {

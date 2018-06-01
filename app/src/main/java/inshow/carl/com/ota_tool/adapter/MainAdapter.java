@@ -28,6 +28,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import inshow.carl.com.ota_tool.DaemonManager;
 import inshow.carl.com.ota_tool.R;
 import inshow.carl.com.ota_tool.entity.DeviceEntity;
 
@@ -46,17 +47,21 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<DeviceEntity> mDataList = new ArrayList<>();
     private Context context;
     private int currentPos ;
+    private DaemonManager manager;
+
 
     public void setCurrentPos(int currentPos) {
         this.currentPos = currentPos;
+        manager.setCurrentKey(currentPos);
     }
 
     public int getCurrentPos(){
         return currentPos;
     }
 
-    public  MainAdapter(Context context) {
+    public  MainAdapter(Context context,DaemonManager manager) {
         this.context = context;
+        this.manager = manager;
     }
 
     public void notifyDataSetChanged(List<DeviceEntity> dataList) {
