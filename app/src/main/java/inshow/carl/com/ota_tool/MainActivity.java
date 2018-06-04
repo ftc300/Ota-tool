@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
@@ -32,16 +33,23 @@ import android.widget.Toast;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import inshow.carl.com.ota_tool.adapter.MainAdapter;
 import inshow.carl.com.ota_tool.entity.DeviceEntity;
+import inshow.carl.com.ota_tool.tools.L;
+import inshow.carl.com.ota_tool.tools.MailManager;
 import inshow.carl.com.ota_tool.upgrade.BluetoothLeService;
 import no.nordicsemi.android.dfu.DfuProgressListener;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
 
+import static android.os.Environment.getExternalStorageDirectory;
 import static inshow.carl.com.ota_tool.DaemonManager.ProcessEnums.DFU_PROCESSING;
 import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuCreator;
 import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuItemClickListener;
@@ -104,9 +112,9 @@ public class MainActivity extends BasicAct implements TextWatcher {
     DaemonManager manager = new DaemonManager(new DaemonManager.IDaemonProcess() {
         @Override
         public void onFail(int currentPos) {
-            Log.d(TAG,"onFail");
+            L.d("onFail");
             //取消升级过程
-            if(currentPos == mAdapter.getCurrentPos()) {
+            if (currentPos == mAdapter.getCurrentPos()) {
                 mBluetoothLeService.disconnect();
                 upgradeFail();
             }
@@ -123,7 +131,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 finish();
             }
             if (!TextUtils.isEmpty(getCurrentMac())) {
-                Log.d(TAG, "onServiceConnected  " + getCurrentMac());
+                L.d("onServiceConnected  " + getCurrentMac());
                 mBluetoothLeService.connect(getCurrentMac());
             }
         }
@@ -139,24 +147,24 @@ public class MainActivity extends BasicAct implements TextWatcher {
         public void onReceive(final Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                Log.d(TAG, getCurrentMac() + " Connected");
+                L.d(getCurrentMac() + " Connected");
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                Log.d(TAG, getCurrentMac() + " Disconnected");
+                L.d(getCurrentMac() + " Disconnected");
                 mBluetoothLeService.disconnect();
                 if (intoDfuFlag > 0) {
                     startOTA(context, getCurrentMac());
                     intoDfuFlag = 0;
-                }else {
+                } else {
                     //connec fail
                     upgradeFail();
                     Toast.makeText(context, "未发现该设备,请确认该设备可用(￢_￢)", Toast.LENGTH_LONG).show();
                 }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                Log.d(TAG, getCurrentMac() + " Services Discovered");
+                L.d(getCurrentMac() + " Services Discovered");
                 mBluetoothLeService.writeCharacteristic();
                 intoDfuFlag++;
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                Log.d(TAG, "Data Available");
+                L.d("Data Available");
             }
         }
     };
@@ -167,9 +175,9 @@ public class MainActivity extends BasicAct implements TextWatcher {
         mAdapter.getItem(pos).state = STATE_FAIL;
         mAdapter.notifyItemChanged(pos);
         writeData2SD(mAdapter.getItem(pos));
-        if (pos < mAdapter.getItemCount() - 1 ) {
+        if (pos < mAdapter.getItemCount() - 1) {
             mAdapter.setCurrentPos(pos + 1);
-            startScan(manager,mAdapter, getCurrentMac(), mBluetoothLeService);
+            startScan(manager, mAdapter, getCurrentMac(), mBluetoothLeService);
         }
     }
 
@@ -180,13 +188,13 @@ public class MainActivity extends BasicAct implements TextWatcher {
         @Override
         public void onDfuProcessStarting(String deviceAddress) {
             super.onDfuProcessStarting(deviceAddress);
-            Log.d(TAG,"onDfuProcessStarting");
+            L.d("onDfuProcessStarting");
         }
 
         @Override
         public void onDeviceConnected(String deviceAddress) {
             super.onDeviceConnected(deviceAddress);
-            Log.d(TAG,"onDeviceConnected;");
+            L.d("onDeviceConnected;");
             processArray.put(mAdapter.getCurrentPos(), DFU_PROCESSING);
             manager.notifyStateChange(processArray);
         }
@@ -209,13 +217,13 @@ public class MainActivity extends BasicAct implements TextWatcher {
             if (pos < mAdapter.getItemCount() - 1) {
                 Log.e(TAG, "onDfuCompleted next start");
                 mAdapter.setCurrentPos(pos + 1);
-                startScan(manager,mAdapter, getCurrentMac(), mBluetoothLeService);
+                startScan(manager, mAdapter, getCurrentMac(), mBluetoothLeService);
             }
         }
 
         @Override
         public void onProgressChanged(final String deviceAddress, final int percent, final float speed, final float avgSpeed, final int currentPart, final int partsTotal) {
-            Log.d(TAG, "onProgressChanged" + percent);
+            L.d("onProgressChanged" + percent);
             mPercent = percent;
             mAdapter.getItem(mAdapter.getCurrentPos()).state = STATE_PROCESSING;
             mAdapter.getItem(mAdapter.getCurrentPos()).process = mPercent;
@@ -275,19 +283,19 @@ public class MainActivity extends BasicAct implements TextWatcher {
             @Override
             public void afterTextChanged(Editable editable) {
                 String scanText = etGun.getText().toString();
-                if(TextUtils.isEmpty(filePath.getText().toString())){
+                if (TextUtils.isEmpty(filePath.getText().toString())) {
                     showToast("请先选择固件(￢_￢)");
                     return;
                 }
 
-                if(!TextUtils.isEmpty(scanText)&&scanText.length() == 27){
+                if (!TextUtils.isEmpty(scanText) && scanText.length() == 27) {
                     try {
                         String mac = etGun.getText().toString().toUpperCase().split("-")[1];
                         addDevice2List(mac);
                         etGun.requestFocus();
                         etGun.setText("");
                         etGun.setSelection(0);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         showToast("解析有误，添加失败(￢_￢)");
                         e.printStackTrace();
                     }
@@ -295,7 +303,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
 
             }
         });
-        version.setText("V"+getLocalVersionName(context));
+        version.setText("V" + getLocalVersionName(context));
         btnInputSure.setEnabled(getBtnInputSureUsed());
         checkBleAdapter(this);
         initSwipe();
@@ -340,12 +348,11 @@ public class MainActivity extends BasicAct implements TextWatcher {
     private String getCurrentMac() {
         if (null != mAdapter.getItem(mAdapter.getCurrentPos())) {
             int pos = mAdapter.getCurrentPos();
-            Log.d("current position:",pos + "");
+            Log.d("current position:", pos + "");
             return mAdapter.getItem(pos).getTrueMac();
         }
         return "";
     }
-
 
 
     @Override
@@ -384,7 +391,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                         llScanType.setVisibility(View.GONE);
                         llInputType.setVisibility(View.GONE);
 //                        openLogFolder((Activity) context);
-                        testAdd();
+//                        testAdd();
                         break;
                     case R.id.menu_gun:
                         llScanType.setVisibility(View.GONE);
@@ -393,6 +400,10 @@ public class MainActivity extends BasicAct implements TextWatcher {
                         etGun.requestFocus();
                         etGun.setText("");
                         etGun.setSelection(0);
+                        break;
+                    case R.id.send_email:
+                        sendEmail();
+                        Toast.makeText(context, "反馈成功", Toast.LENGTH_LONG).show();
                         break;
                     default:
                         break;
@@ -422,24 +433,25 @@ public class MainActivity extends BasicAct implements TextWatcher {
             String mac = etGun.getText().toString().toUpperCase().split("-")[1];
             addDevice2List(mac);
             etGun.setText("");
-        }catch (Exception e){
+        } catch (Exception e) {
             showToast("解析有误，添加失败(￢_￢)");
             e.printStackTrace();
         }
     }
 
-    void testAdd(){
-        addDevice2List("7058960002C4");
-        addDevice2List("705896003CA0");
-        addDevice2List("7058960002C9");
-        addDevice2List("705896000864");
-        addDevice2List("7058960094C8");
-    }
+//    void testAdd(){
+//        addDevice2List("7058960002C4");
+//        addDevice2List("705896003CA0");
+//        addDevice2List("7058960002C9");
+//        addDevice2List("705896000864");
+//        addDevice2List("7058960094C8");
+//    }
 
     private void addDevice2List(String mac) {
         if (TextUtils.isEmpty(mac)) return;
         //        String mac, int process, int state, long timestamp
         DeviceEntity entity = new DeviceEntity(mac, PROCESS_INDETERMINATE_FALSE, STATE_INIT, filePath.getText().toString());
+        L.d("addDevice2List：" + mac);
         if (!hasAddDevice(entity)) {
             mAdapter.addNotify(entity);
             if (!isProcessing()) {
@@ -448,7 +460,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 } else {
                     mAdapter.setCurrentPos(mAdapter.getCurrentPos() + 1);
                 }
-                startScan(manager,mAdapter, getCurrentMac(), mBluetoothLeService);
+                startScan(manager, mAdapter, getCurrentMac(), mBluetoothLeService);
             }
             showToast("添加成功 (●’◡’●)");
         } else {
@@ -471,7 +483,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
     private void initSwipe() {
-        mAdapter = new MainAdapter(this,manager) {
+        mAdapter = new MainAdapter(this, manager) {
             @Override
             public int getItemViewType(int position) {
                 if (null != mAdapter.getItem(position)) {
@@ -526,7 +538,14 @@ public class MainActivity extends BasicAct implements TextWatcher {
         return false;
     }
 
-
+    private void sendEmail() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "0-inshow-ota" + File.separator + "upgrade-log.txt";
+        String path1 = getExternalStorageDirectory().getAbsolutePath() + File.separator + "0-inshow-ota" + File.separator + "app-log";
+        List<String> strings = new ArrayList<>();
+        strings.add(path);
+        strings.add(path1);
+        MailManager.getInstance().sendMailWithMultiFile("OTA Batch Log", "", strings);
+    }
 
 
 }

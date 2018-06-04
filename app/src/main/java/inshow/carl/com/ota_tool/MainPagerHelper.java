@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +26,7 @@ import java.util.List;
 
 import inshow.carl.com.ota_tool.adapter.MainAdapter;
 import inshow.carl.com.ota_tool.entity.FileEntity;
+import inshow.carl.com.ota_tool.tools.L;
 import inshow.carl.com.ota_tool.tools.Utils;
 import inshow.carl.com.ota_tool.upgrade.BluetoothLeService;
 import inshow.carl.com.ota_tool.upgrade.DfuService;
@@ -60,11 +60,11 @@ public class MainPagerHelper {
 
     public static void handleChooseFile(Context c, Intent data, TextView filePath) {
         Uri uri = data.getData();
-        Log.d("MainActivity", "File Uri: " + uri.toString());
+        L.d( "File Uri: " + uri.toString());
         String path = null;
         try {
             path = Utils.getPath(c, uri);
-            Log.d("MainActivity", "File Path: " + path);
+            L.d( "File Path: " + path);
             if (null != path) {
                 final File file = new File(path);
                 filePath.setText(path);
@@ -151,12 +151,12 @@ public class MainPagerHelper {
         mAdapter.getItem(currentPos).state = STATE_PROCESSING;
         mAdapter.getItem(currentPos).process = PROCESS_INDETERMINATE_TRUE;
         mAdapter.notifyItemChanged(currentPos);
-        Log.d("MainActivity", "startScan,current position:" + currentPos);
+        L.d( "startScan,current position:" + currentPos);
         scanFoundHandle(mac, new IScanHelper() {
             @Override
             public void deviceFound() {
                 if (null != mBluetoothLeService) {
-                    Log.d(TAG, "mBluetoothLeService connect");
+                    L.d("mBluetoothLeService connect");
                     mBluetoothLeService.connect(mac);
                 }
             }
@@ -198,7 +198,7 @@ public class MainPagerHelper {
 
 
     public static void startOTA(final Context context, final String mac) {
-        Log.d("MainActivity", "starOTA");
+        L.d( "starOTA");
         scanFoundHandle(mac, new IScanHelper() {
             @Override
             public void deviceFound() {
@@ -222,21 +222,21 @@ public class MainPagerHelper {
             @Override
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
-                Log.d("MainActivity", "  onScanFailed :" + errorCode);
+                L.d( "  onScanFailed :" + errorCode);
             }
 
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
-                Log.d("MainActivity", "  onScanResult");
+                L.d( "  onScanResult");
             }
 
             @Override
             public void onBatchScanResults(List<ScanResult> results) {
-                Log.d("MainActivity", "  onBatchScanResults");
+                L.d( "  onBatchScanResults");
                 for (ScanResult item : results) {
                     if (item.getDevice().getAddress().toUpperCase().equals(mac.toUpperCase())) {
-                        Log.d(TAG, "  onBatchScanResults equals ");
+                        L.d("  onBatchScanResults equals ");
                         hasFound = true;
                         helper.deviceFound();
                         break;

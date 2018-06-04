@@ -8,4 +8,6 @@
         android:title="扫描枪"/>
     <item android:id="@+id/menu_log"
         android:title="文件记录"/>
+    <item android:id="@+id/send_email"
+        android:title="反馈"/>
 </menu>

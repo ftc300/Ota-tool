@@ -154,8 +154,22 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
+    public static final String getLogFilePath() {
+        String sd_path = "";
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+        {
+            File sdFile = Environment.getExternalStorageDirectory();
+            sd_path = sdFile.getPath() + File.separator + "0-inshow-ota";
+            File dirFile = new File(sd_path);
+            if(!dirFile.exists()){
+                dirFile.mkdir();
+            }
+        }
+        return sd_path+File.separator +"app-log";
+    }
+
 
     public static String getFormatLog(DeviceEntity e) {
         Date d = new Date();

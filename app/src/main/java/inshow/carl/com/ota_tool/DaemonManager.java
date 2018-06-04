@@ -1,8 +1,9 @@
 package inshow.carl.com.ota_tool;
 
 import android.os.Handler;
-import android.util.Log;
 import android.util.SparseArray;
+
+import inshow.carl.com.ota_tool.tools.L;
 
 import static inshow.carl.com.ota_tool.DaemonManager.ProcessEnums.DFU_PROCESSING;
 import static inshow.carl.com.ota_tool.DaemonManager.ProcessEnums.START_DFU;
@@ -52,12 +53,16 @@ public class DaemonManager {
 
         @Override
         public void run() {
-            Log.d(TAG, "array.get(currentKey):" + array.get(currentKey) + ",STARTDFU:" + DFU_PROCESSING);
-            if (array.get(currentPos) != DFU_PROCESSING) {
-                Log.d(TAG, "run: DaemonRunnable onFail");
-                listener.onFail(currentPos);
-            } else {
-                Log.d(TAG, "not run: DaemonRunnable onFail");
+            try {
+                L.d( "array.get(currentKey):" + array.get(currentKey) + ",STARTDFU:" + DFU_PROCESSING);
+                if (array.get(currentPos) != DFU_PROCESSING) {
+                   L.d( "run: DaemonRunnable onFail");
+                    listener.onFail(currentPos);
+                } else {
+                   L.d( "not run: DaemonRunnable onFail");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
