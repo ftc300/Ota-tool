@@ -21,4 +21,9 @@
 
     <color name="red_normal">#FF0000</color>
     <color name="red_pressed">#FF6666</color>
+    <color name="red_pressed1">#ffA8D7A7</color>
+    <color name="red_pressed2">#99a2a2a2</color>
+    <color name="red_pressed3">#50aaaaaa</color>
+
+
 </resources>

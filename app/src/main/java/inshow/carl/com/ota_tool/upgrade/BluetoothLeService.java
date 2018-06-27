@@ -279,6 +279,37 @@ public class BluetoothLeService extends Service {
         return status;
     }
 
+    public boolean writeSecureCharacteristic(){
+        //check mBluetoothGatt is available
+        if (mBluetoothGatt == null) {
+            Log.e(TAG, "lost connection");
+            return false;
+        }
+        BluetoothGattService Service = mBluetoothGatt.getService(UUID.fromString("c99a3001-7f3c-4e85-bde2-92f2037bfd42"));
+        if (Service == null) {
+            Log.e(TAG, "service not found!");
+            return false;
+        }
+        BluetoothGattCharacteristic charac = Service.getCharacteristic(UUID.fromString("c99a3102-7f3c-4e85-bde2-92f2037bfd42"));
+        if (charac == null) {
+            Log.e(TAG, "char not found!");
+            return false;
+        }
+        charac.setValue(getSecureConnect());
+        boolean status = mBluetoothGatt.writeCharacteristic(charac);
+        return status;
+    }
+
+    public static byte[] getSecureConnect(){
+        int[] value = new int[]{3,1,0,0};
+        byte[] src = new byte[4];
+        src[3] = (byte) (value[3] & 0x0FF);
+        src[2] = (byte) (value[2] & 0x0FF);
+        src[1] = (byte) (value[1] & 0x0FF);
+        src[0] = (byte) (value[0] & 0x0FF);
+        return src;
+    }
+
 
     public static byte[] getDfuWriteBytes() {
         int[] value = new int[]{5,0,0,0};

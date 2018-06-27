@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "543451454633",
+    "firebase_url": "https://justfun-9d98c.firebaseio.com",
+    "project_id": "justfun-9d98c",
+    "storage_bucket": "justfun-9d98c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543451454633:android:9cd4b9413517a138",
+        "android_client_info": {
+          "package_name": "inshow.carl.com.ota_tool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "543451454633-8dlj7u66cm77ekr99eg9rud4lgbtckqs.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "543451454633-8dlj7u66cm77ekr99eg9rud4lgbtckqs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD871MCPvzY4d0_DU4h-N3M9QIwfM21n7w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -262,6 +262,8 @@ public class MainPagerHelper {
 
     }
 
+
+
     public interface IScanHelper {
         void deviceFound();
     }

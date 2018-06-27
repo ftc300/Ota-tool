@@ -23,6 +23,7 @@ public class BasicAct extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         context = this;
 
+
     }
 
     protected void showToast(final int messageResId) {

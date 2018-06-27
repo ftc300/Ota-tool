@@ -1,1 +1,1 @@
-include ':app', ":zxinglite", ":swipelib"
+include ':app',":zxinglite", ":swipelib"

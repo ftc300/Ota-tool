@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    style="@style/Widget.List"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="inshow.carl.com.ota_tool.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:text="INSHOW CSD"
+            android:textColor="@color/headerTextColor"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/bar_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="8dp"
+            android:text="v1.0.0"
+            android:textColor="@color/headerTextColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="扫描"
+            android:textColor="@color/headerTextColor"
+            android:textSize="15sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <inshow.carl.com.ota_tool.view.radar.RadarScanView
+            android:id="@+id/radarScanView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="-400dp"
+            android:layout_marginRight="-400dp"
+            android:layout_marginTop="-400dp"
+            android:layout_marginBottom="-400dp"/>
+
+        <inshow.carl.com.ota_tool.view.radar.RandomTextView
+            android:id="@+id/randomTextView"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/watch"
+            android:layout_gravity="center|left"
+            android:text="米家手表"
+            android:textSize="15sp"
+            android:gravity="center"
+
+            />
+
+
+
+    </FrameLayout>
+
+
+</LinearLayout>

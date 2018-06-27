@@ -49,6 +49,8 @@ import no.nordicsemi.android.dfu.DfuProgressListener;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.WRITE_SECURE_SETTINGS;
 import static android.os.Environment.getExternalStorageDirectory;
 import static inshow.carl.com.ota_tool.DaemonManager.ProcessEnums.DFU_PROCESSING;
 import static inshow.carl.com.ota_tool.MainPagerHelper.getSwipeMenuCreator;
@@ -107,7 +109,6 @@ public class MainActivity extends BasicAct implements TextWatcher {
     private BluetoothLeService mBluetoothLeService;
     private int intoDfuFlag = 0;
     private SparseArray<Integer> processArray = new SparseArray();
-    private Handler handler = new Handler();
 
     DaemonManager manager = new DaemonManager(new DaemonManager.IDaemonProcess() {
         @Override
@@ -257,7 +258,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 ) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,}, PERMISSION_REQ);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,ACCESS_FINE_LOCATION,WRITE_SECURE_SETTINGS}, PERMISSION_REQ);
         }
         selectFile.setOnClickListener(new View.OnClickListener() {
             @Override
