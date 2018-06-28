@@ -175,7 +175,7 @@ public class RadarScanView extends View {
         Shader shader = new SweepGradient(centerX, centerY, new int[]{Color.TRANSPARENT, Color.TRANSPARENT,Color.parseColor("#b3d9ff"), Color.parseColor("#99ccff"), Color.parseColor("#1a8cff")}, new float[]{0f, 0.98f,0.99f, 0.99999f, 1f});
         mPaintRadar.setShader(shader);
         canvas.concat(matrix);
-        canvas.drawCircle(centerX, centerY, 3 * radarRadius / 7, mPaintRadar);
+        canvas.drawCircle(centerX, centerY,  radarRadius, mPaintRadar);
     }
 
     private int dip2px(Context context, float dipValue) {

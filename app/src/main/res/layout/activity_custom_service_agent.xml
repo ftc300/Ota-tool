@@ -23,7 +23,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingTop="8dp"
-            android:text="INSHOW CSD"
+            android:text="CSD"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
 
@@ -47,7 +47,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="10dp"
-            android:text="扫描"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
     </FrameLayout>
@@ -55,6 +54,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <inshow.carl.com.ota_tool.view.radar.RadarScanView
             android:id="@+id/radarScanView"
             android:layout_width="match_parent"
@@ -64,25 +64,23 @@
             android:layout_marginTop="-400dp"
             android:layout_marginBottom="-400dp"/>
 
-        <inshow.carl.com.ota_tool.view.radar.RandomTextView
-            android:id="@+id/randomTextView"
-            android:layout_width="400dp"
-            android:layout_height="400dp"
-            android:layout_gravity="center"/>
+        <!--<inshow.carl.com.ota_tool.view.radar.RandomTextView-->
+            <!--android:id="@+id/randomTextView"-->
+            <!--android:layout_width="400dp"-->
+            <!--android:layout_height="400dp"-->
+            <!--android:layout_gravity="center"/>-->
 
         <TextView
             android:id="@+id/img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/watch"
-            android:layout_gravity="center|left"
+            android:layout_gravity="center|right"
+            android:layout_margin="40dp"
             android:text="米家手表"
             android:textSize="15sp"
             android:gravity="center"
-
             />
-
-
 
     </FrameLayout>
 

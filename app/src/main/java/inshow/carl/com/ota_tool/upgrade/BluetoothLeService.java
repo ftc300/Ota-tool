@@ -35,6 +35,8 @@ import android.util.Log;
 import java.util.List;
 import java.util.UUID;
 
+import inshow.carl.com.ota_tool.tools.L;
+
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
@@ -281,6 +283,7 @@ public class BluetoothLeService extends Service {
 
     public boolean writeSecureCharacteristic(){
         //check mBluetoothGatt is available
+        L.d("writeSecureCharacteristic");
         if (mBluetoothGatt == null) {
             Log.e(TAG, "lost connection");
             return false;

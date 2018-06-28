@@ -212,7 +212,6 @@ public class MainPagerHelper {
                 starter.start(context, DfuService.class);
             }
         });
-
     }
 
 
@@ -261,8 +260,6 @@ public class MainPagerHelper {
         }, 5000);
 
     }
-
-
 
     public interface IScanHelper {
         void deviceFound();

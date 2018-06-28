@@ -6,7 +6,26 @@ package inshow.carl.com.ota_tool.entity;
  */
 
 public class MiWatch {
-    String mac;
-    boolean pressed;
+   public String mac;
+   public boolean pressed;
 
+    public MiWatch(String mac, boolean pressed) {
+        this.mac = mac;
+        this.pressed = pressed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MiWatch miWatch = (MiWatch) o;
+
+        return mac.equals(miWatch.mac);
+    }
+
+    @Override
+    public int hashCode() {
+        return mac.hashCode();
+    }
 }

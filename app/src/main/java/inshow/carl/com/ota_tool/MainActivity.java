@@ -356,6 +356,8 @@ public class MainActivity extends BasicAct implements TextWatcher {
     }
 
 
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
