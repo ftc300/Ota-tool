@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="inshow.carl.com.ota_tool">
+    package="inshow.carl.com.csd">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
+    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -27,20 +30,30 @@
         android:icon="@mipmap/csd"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".AppController"
+        android:name="inshow.carl.com.csd.AppController"
         android:theme="@style/AppTheme">
         <meta-data android:name="DATABASE" android:value="ota.db" />
         <meta-data android:name="VERSION" android:value="1" />
         <meta-data android:name="QUERY_LOG" android:value="true" />
         <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="inshow.carl.com.ota_tool.entity" />
-        <service android:name=".upgrade.BluetoothLeService" android:enabled="true"/>
+        <service android:name="inshow.carl.com.csd.upgrade.BluetoothLeService" android:enabled="true"/>
 
         <service
-            android:name=".upgrade.DfuService"  android:exported="true"/>
+            android:name="inshow.carl.com.csd.upgrade.DfuService"  android:exported="true"/>
 
         <service
             android:name="com.inuker.bluetooth.library.BluetoothService" />
-        <activity android:name=".csd.CSDAct">
+        <!--<activity android:name="inshow.carl.com.csd.mijia.MiMainActivity"-->
+            <!--android:configChanges="orientation|screenSize">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+        <!---->
+        <activity android:name="inshow.carl.com.csd.csd.CSDAct"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,17 +61,18 @@
             </intent-filter>
         </activity>
 
-        <!--<activity android:name=".MainActivity">-->
+        <!--<activity android:namMiMainActivityvity">-->
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
 
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         <!--</activity>-->
-        <activity android:name=".DfuAct"/>
-        <activity android:name=".WeChatCaptureActivity"/>
-        <activity android:name=".csd.PressedMiWatchAct"/>
-        <activity android:name=".csd.TestWatchAct"/>
+        <activity android:name="inshow.carl.com.csd.DfuAct"/>
+        <activity android:name="inshow.carl.com.csd.WeChatCaptureActivity"/>
+        <activity android:name="inshow.carl.com.csd.csd.TestWatchAct"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.xiaomi.account.openauth.AuthorizeActivity" />
     </application>
 
 </manifest>

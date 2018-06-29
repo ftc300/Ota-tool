@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    style="@style/Widget.List"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="inshow.carl.com.csd.MainActivity">
+    <FrameLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary">
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:drawableLeft="@drawable/back"
+            android:textColor="@color/headerTextColor"
+            android:padding="10dp"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:text="手表调试"
+            android:textColor="@color/headerTextColor"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/bar_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="8dp"
+            android:textColor="@color/headerTextColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:textColor="@color/headerTextColor"
+            android:textSize="15sp" />
+    </FrameLayout>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:gravity="center"
+            android:text="MAC"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:freezesText="true" />
+        <TextView
+            android:id="@+id/tvMac"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:text="10124662"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"/>
+    </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:gravity="center"
+            android:text="State"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:freezesText="true" />
+        <TextView
+            android:id="@+id/tvState"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:text="on"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"/>
+    </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+    <Button
+        android:id="@+id/reconnect"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:enabled="false"
+        android:background="@drawable/btn_bg"
+        android:layout_gravity="center"
+        android:text="重新连接"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/disconnect"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+        android:background="@drawable/btn_bg"
+        android:layout_gravity="center"
+        android:text="断开连接"
+        android:textColor="@color/white" />
+    </TableRow>
+    <Button
+        android:id="@+id/step"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:background="@drawable/btn_bg"
+        android:layout_gravity="center"
+        android:text="转动步针"
+        android:layout_margin="20dp"
+        android:textColor="@color/white" />
+</LinearLayout>

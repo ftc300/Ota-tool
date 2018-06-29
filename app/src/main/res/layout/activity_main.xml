@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="inshow.carl.com.ota_tool.MainActivity">
+    tools:context="inshow.carl.com.csd.MainActivity">
 
     <FrameLayout
         android:id="@+id/title_bar"

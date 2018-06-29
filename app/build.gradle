@@ -40,6 +40,6 @@ dependencies {
     compile files('libs/nineoldandroids-2.4.0.jar')
     compile 'com.allenliu.badgeview:library:1.1.1'
     compile 'com.inuker.bluetooth:library:1.4.0'
-
+    compile 'com.xiaomi.account:oauth-android:latest.release'
 
 }
