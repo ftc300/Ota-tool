@@ -337,7 +337,7 @@
         android:gravity="center"
         android:background="@drawable/btn_bg"
         android:layout_gravity="center"
-        android:text="时针转一圈"
+        android:text="分针转一圈"
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"

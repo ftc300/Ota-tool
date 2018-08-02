@@ -205,7 +205,7 @@ public class TestWatchAct extends BasicAct {
                 break;
             case R.id.btnHour:
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
-                    showToast("开始时针测试...");
+                    showToast("开始分针测试...");
                     BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), new BleManager.IReadOnResponse() {
                         @Override
                         public void onSuccess(byte[] data) {
@@ -236,7 +236,16 @@ public class TestWatchAct extends BasicAct {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             showToast("恢复出厂设置中...");
+                            BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), setControlData(new int[]{1, 0, 0, 0}));
+                            long time = System.currentTimeMillis() /1000 -  951840000 ;
+                            BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), setCurrentTime((int)time));
                             BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), setControlData(new int[]{4, 0, 0, 0}));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                }
+                            },3000);
                         }
                     });
                 }
