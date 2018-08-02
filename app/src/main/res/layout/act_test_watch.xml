@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    style="@style/Widget.List"
+    android:layout_width="match_parent">
+<LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
-    style="@style/Widget.List"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="inshow.carl.com.csd.MainActivity">
+    tools:context="inshow.carl.com.csd.MainActivity"
+    >
     <FrameLayout
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
@@ -60,76 +64,254 @@
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
     </FrameLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="基本信息"
+        android:layout_margin="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/colorPrimary"
+        android:freezesText="true" />
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp" />
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="20dp"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="middle"
             android:gravity="center"
-            android:text="MAC"
+            android:text="MAC地址"
+            android:padding="8dp"
             android:textSize="14sp"
             android:textColor="@color/colorPrimary"
             android:freezesText="true" />
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
         <TextView
             android:id="@+id/tvMac"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            tools:text="10124662"
+            android:text="N/A"
             android:textSize="14sp"
+            android:padding="8dp"
             android:textColor="@color/colorPrimary"/>
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
     </TableRow>
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"/>
+
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="20dp"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="middle"
             android:gravity="center"
-            android:text="State"
+            android:text="版本信息"
+            android:textSize="14sp"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimary"
+            android:freezesText="true" />
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="N/A"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"/>
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
+    </TableRow>
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"/>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:padding="8dp"
+            android:gravity="center"
+            android:text="当前步数"
             android:textSize="14sp"
             android:textColor="@color/colorPrimary"
             android:freezesText="true" />
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
+        <TextView
+            android:id="@+id/tvCurrentStep"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="N/A"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"/>
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
+    </TableRow>
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"/>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="按键次数"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:freezesText="true" />
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
+        <TextView
+            android:id="@+id/tvPress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="N/A"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"/>
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
+    </TableRow>
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"/>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:gravity="center"
+            android:text="连接状态"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:padding="8dp"
+            android:freezesText="true" />
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
         <TextView
             android:id="@+id/tvState"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            tools:text="on"
+            android:text="N/A"
+            android:padding="8dp"
             android:textSize="14sp"
             android:textColor="@color/colorPrimary"/>
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
     </TableRow>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"/>
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:layout_marginTop="10dp">
     <Button
         android:id="@+id/reconnect"
         android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_height="38dp"
         android:layout_weight="1"
         android:gravity="center"
         android:enabled="false"
         android:background="@drawable/btn_bg"
         android:layout_gravity="center"
         android:text="重新连接"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:textColor="@color/white" />
 
     <Button
         android:id="@+id/disconnect"
         android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_height="38dp"
         android:layout_weight="1"
-        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:gravity="center"
         android:background="@drawable/btn_bg"
         android:layout_gravity="center"
@@ -137,13 +319,65 @@
         android:textColor="@color/white" />
     </TableRow>
     <Button
-        android:id="@+id/step"
+        android:id="@+id/btnStep"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="38dp"
         android:gravity="center"
         android:background="@drawable/btn_bg"
         android:layout_gravity="center"
-        android:text="转动步针"
-        android:layout_margin="20dp"
+        android:text="步针转一圈"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/white" />
+    <Button
+        android:id="@+id/btnHour"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:gravity="center"
+        android:background="@drawable/btn_bg"
+        android:layout_gravity="center"
+        android:text="时针转一圈"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/white" />
+    <Button
+        android:id="@+id/btnVibrate"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:gravity="center"
+        android:background="@drawable/btn_bg"
+        android:layout_gravity="center"
+        android:text="振动"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/btnPress"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:gravity="center"
+        android:background="@drawable/btn_bg"
+        android:layout_gravity="center"
+        android:text="按键测试"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/white" />
+    <Button
+        android:id="@+id/btnRecovery"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:gravity="center"
+        android:background="@drawable/btn_bg_red"
+        android:layout_gravity="center"
+        android:text="恢复出厂设置"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:textColor="@color/white" />
 </LinearLayout>
+</ScrollView>

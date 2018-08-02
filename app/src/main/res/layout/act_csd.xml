@@ -23,7 +23,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingTop="8dp"
-            android:text="CSD"
+            android:text="隐秀售后"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
 
@@ -35,7 +35,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingBottom="8dp"
-            android:text="v1.0.0"
+            android:text="v3.0.0"
             android:textColor="@color/headerTextColor"
             android:textSize="12sp" />
 
@@ -61,7 +61,7 @@
             android:layout_gravity="top|center_horizontal"
             android:paddingTop="8dp"
             android:gravity="center"
-            android:text="发现米家手表\n 请按下按键来连接"
+            android:text="发现米家石英表\n 请按下按键来连接"
             android:textColor="@color/colorPrimary"
             android:padding="10dp"
             android:visibility="gone"
@@ -81,19 +81,28 @@
             <!--android:layout_width="400dp"-->
             <!--android:layout_height="400dp"-->
             <!--android:layout_gravity="center"/>-->
-
-        <TextView
+        <ImageView
             android:id="@+id/img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/watch"
-            android:layout_gravity="center|right"
-            android:layout_margin="40dp"
-            android:text="米家手表"
-            android:textSize="15sp"
-            android:visibility="gone"
-            android:gravity="center"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="100dp"
+            android:src="@drawable/realism_mijia_watch_normal"
+            android:background="@drawable/image_bg"
             />
+
+        <!--<TextView-->
+            <!--android:id="@+id/img"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:drawableTop="@drawable/watch"-->
+            <!--android:layout_margin="40dp"-->
+            <!--android:text="米家石英表"-->
+            <!--android:textSize="13sp"-->
+            <!--android:textColor="@color/colorPrimary"-->
+            <!--android:visibility="gone"-->
+            <!--android:gravity="center"-->
+            <!--/>-->
 
     </FrameLayout>
 

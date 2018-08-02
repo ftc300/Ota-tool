@@ -74,7 +74,7 @@ public class RippleView extends TextView
         super(context, attrs, defStyleAttr);
         initPaint();
         initAnimation();
-        setCompoundDrawables(null,getResources().getDrawable(R.drawable.watch),null,null);
+        setCompoundDrawables(null,getResources().getDrawable(R.drawable.realism_mijia_watch_normal),null,null);
     }
 
     private void initPaint()

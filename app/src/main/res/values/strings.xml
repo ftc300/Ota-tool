@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">隐秀客服</string>
+    <string name="app_name">隐秀售后</string>
     <string name="dfu_uploading_percentage">%d%%</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>

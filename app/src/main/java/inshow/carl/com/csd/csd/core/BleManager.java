@@ -13,6 +13,7 @@ import java.util.UUID;
 import inshow.carl.com.csd.tools.L;
 
 import static com.inuker.bluetooth.library.Code.REQUEST_SUCCESS;
+import static inshow.carl.com.csd.csd.core.ConvertDataMgr.bytes2HexString;
 
 /**
  * Created by chendong on 2018/6/28.
@@ -73,28 +74,34 @@ public class BleManager {
     }
 
 
-    public void readCharactteristic(String MAC, UUID serviceUUID, UUID characterUUID) {
+    public void readCharacteristic(String MAC, final UUID serviceUUID, final UUID characterUUID, final IReadOnResponse readOnResponse) {
         mClient.read(MAC, serviceUUID, characterUUID, new BleReadResponse() {
             @Override
             public void onResponse(int code, byte[] data) {
                 if (code == REQUEST_SUCCESS) {
-
+                    L.d("serviceUUID:" + serviceUUID.toString() + ",characterUUID :" + characterUUID.toString()+ ",read:" + bytes2HexString(data));
+                    readOnResponse.onSuccess(data);
+                }else {
+                    readOnResponse.onFail();
                 }
             }
         });
     }
 
 
-    public void writeCharacteristic(String MAC, UUID serviceUUID, UUID characterUUID, byte[] bytes) {
+    public void writeCharacteristic(String MAC, UUID serviceUUID, final UUID characterUUID, final byte[] bytes) {
         mClient.write(MAC, serviceUUID, characterUUID, bytes, new BleWriteResponse() {
             @Override
             public void onResponse(int code) {
                 if (code == REQUEST_SUCCESS) {
-                    L.d("writeCharacteristic success" );
+                    L.d(characterUUID.toString() + ",writeCharacteristic success :"  + bytes2HexString(bytes));
+                }else {
+                    L.d(characterUUID.toString()  +",writeCharacteristic fail" );
                 }
             }
         });
     }
+
 
 
     public void clear(String MAC){
@@ -105,5 +112,10 @@ public class BleManager {
 // Constants.REQUEST_RSSI，所有读信号强度的请求
     }
 
+
+    public interface IReadOnResponse{
+        void onSuccess( byte[] data);
+        void onFail();
+    }
 
 }

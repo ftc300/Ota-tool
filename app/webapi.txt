@@ -1,0 +1,332 @@
+服务端App需求
+
+1. 配置文件管理，包括上传/下载/删除/版本查询
+配置文件目前有2个，世界时间城市列表，中国法定节假日列表
+
+2. 获取当前UTC时间
+
+3. 读取/保存用户信息，包括用户ID，出生年月，性别，身高，体重。
+以后可能会扩展，比如增加运动目标（步数），单位（公制或英制）等等
+
+4. 读取/保存用户手表数据
+包括用户ID、设备名称、间隔提醒、我的世界时间城市列表，我的闹钟列表，我的vip名单列表
+
+5. 读取/保存用户计步数据
+
+6. 读取/保存设备电量数据
+包括产品ID，设备ID，电量信息，耗电比例等等
+
+====================
+服务端数据中转需求
+
+1. 如果App更新数据，米家服务器需及时通知我们的服务器
+
+2. 除了以上数据，还需要访问设备绑定数据。
+包括设备ID、mac地址、是否被绑定、绑定用户ID
+TODO：具体方案待定 （保存DID，MAC地址至用户数据，App定期检查是否有变化）
+
+====================
+米家服务器用户数据App接口
+
+type取值：prop(用户设备数据), user_info (用户数据)
+
+插入用户设备数据
+app/user/set_user_device_data
+data={"uid":"xxx","did":"xxx","time":1490900914,"value":"XXX","key":"test","type":"prop"}
+
+插入用户数据
+app/user/set_user_device_data
+data={"uid":"xxx","did":"xxx","time":1490900914,"value":"XXX","key":"test","type":"user_info"}
+
+读取用户设备数据
+app/user/get_user_device_data
+data={"uid":"xxx","did":"xxx","time":1490900914,"key":"test","type":"prop","limit":20,"time_start":1,"time_end":2450900915}
+注：如果key不存在或指定时间段没有数据，都是返回"code":0,"message":"ok","result":[]
+
+读取用户数据
+app/user/get_user_device_data
+data={"uid":"xxx","did":"xxx","time":1490900914,"key":"test","type":"user_info","limit":20,"time_start":1,"time_end":2450900915}
+
+获取时间 （服务器的时间的时间戳）
+device/get_utc_time
+
+批量插入用户数据
+app/user/set_user_device_data
+"data"=
+{
+    "0":{"uid":"xxx","did":"xxx","time":1490900914,"value":"XXX","key":"key1","type":"user_info"},
+    "1":{"uid":"xxx","did":"xxx","time":1490900914,"value":"XXX","key":"key2","type":"user_info"},
+}
+
+批量读取用户数据
+app/user/get_user_device_data
+data={"uid":"xxx","did":"xxx","time":1490900914,"batch_key":["key1","key2"],"type":"user_info","limit":1,"time_start":1,"time_end":2450900915}
+注1：如果出现batch_key则key失效，传batch_key可以不传key
+注2：控制每次的调用量，防止调用量太大
+
+====================
+米家服务器转发接口：
+同步数据的总体格式为：
+{
+    "id":234233, // 消息id，可通过id对消息去重
+    "type":"msg type", // 消息类型，当前支持1种类型：set_user_device_data
+    "create_time":143253227123, // 消息创建时间，单位毫秒，注意不是发送的时间，因为有重试，所以这个时间有可能远远小于当前发送的时间
+    "data":{} //　消息体，app请求的data
+}
+
+====================
+米家服务器App请求示例
+
+
+保存用户注册信息
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"user_register","value":"{"time":"1490900914"}","type":"user_info"},
+}
+注：time为当前时间戳，如果不填，服务端会自动设为服务端当前时间戳
+
+读取用户注册信息
+app/user/get_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"user_register","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+}
+注：time，time_end都是当前时间戳，time_start是固定值1493568000 (2017/5/1 00:00:00)
+
+
+保存用户信息，包括用户ID，出生年月，性别，身高，体重。
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"user","value":"{"weight":70,"height":170,"gender":"male","birth":"1990-03"}","type":"user_info"},
+}
+注：time为当前时间戳，如果不填，服务端会自动设为服务端当前时间戳
+weight 身高单位：厘米
+height 体重单位：公斤
+默认值：{"weight":70,"height":170,"gender":"male","birth":"1990-01"}
+
+
+读取用户信息，包括用户ID，出生年月，性别，身高，体重
+app/user/get_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"user","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+    ...
+}
+注：time，time_end都是当前时间戳，time_start是固定值1493568000 (2017/5/1 00:00:00)
+
+
+
+
+保存用户手表数据 (间隔提醒，我的闹钟列表、我的世界时间城市列表，我的vip名单列表)
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"interval_alarm","value":{"interval":"30","status":"on","start":1490900914},"type":"user_info"},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"normal_alarm","value":"[{"id":1,"status":"on","time":"07:00","type":2,"label":"起床闹钟"},{"id":2,"status":"on","time":"13:00","type":0,"label":"客户会议"}]","type":"user_info"},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"world_city","value":"[{"id":1,"select":"true"},{"id":2,"select":"false"}]","type":"user_info"},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"vip","value":"[{"name":"张三","number":"13812345678","status":"on"},{"name":"李四","number":"13911112222","status":"on"}]","type":"user_info"},
+}
+注1：time为当前时间戳，如果不填，服务端会自动设为服务端当前时间戳
+注2：status为on或off，select为true或false
+注3：闹钟类型(normal_alarm/type)为 Bit15-0
+0: 响一次；
+1: 每天；
+2: 法定工作日；
+3: 法定节假日；
+4: 周一；
+5: 周二；
+6: 周三；
+7: 周四；
+8: 周五；
+9: 周六；
+10: 周日
+
+
+读取用户手表数据 (间隔提醒，我的闹钟列表、我的世界时间城市列表，我的vip名单列表)
+app/user/get_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"interval_alarm","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"normal_alarm","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"world_city","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"vip","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+}
+注：time，time_end都是当前时间戳，time_start是固定值1493568000 (2017/5/1 00:00:00)
+
+#=========================================================#
+
+##add 2018.5.2  ##
+设备状态数据上报
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"report_status","value":{"reset_register":123123,"reason_open":23234},"type":"prop"},
+}
+注：
+ reset_register: 复位寄存器
+ reason_open: 开机原因
+
+
+##add 2018.2.28 ##
+使用条款和隐私政策同意授权
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"agreement_info","value":{"agree_time":1517456486,"did":"","uid":943588},"type":"user_info"},
+}
+注：
+agree_time:授权确认时间
+did:授权设备id
+uid:授权用户id
+
+##add 2018.2.1 ##
+服务器时间和本地时间
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"timestamp","value":{"server_time":1517456486,"local_time":1517456486},"type":"user_info"},
+}
+注：
+server_time:服务器时间
+local_time:本地时间
+
+##add 2018.1.12 ##
+电量数据数据
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"battery_level","value":{"level":3300,"peak_level":8888,"valley_level":111},"type":"user_info"},
+}
+注：
+level:电池电量
+peak_level:电量波峰值
+valley_level:电量波谷值
+
+##add 11.7##
+固件版本数据
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"dfu_version","value":{"version":"1.2.3_24"},"type":"user_info"},
+}
+注：
+version:固件版本号
+
+##add 10.31##
+振动设置数据
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"vibrate_setting","value":{"starttime":"23:30","endtime":"07:00","isdoubletime":1,"isnodisturb":1},"type":"user_info"},
+}
+注：
+isdoubletime:振动时长加倍 1、打开，0、关闭
+isnodisturb:免打扰 1、打开，0、关闭
+starttime:开启时间
+endtime:结束时间
+
+
+保存用户当日计步数据
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"current_steps","value":{"time":30,"count":1234},"type":"user_info"},
+}
+注：time为当前时间戳，如果不填，服务端会自动设为服务端当前时间戳。value.time表示当日运动时长，单位分钟。value.count表示当日步数
+
+读取用户当日计步数据
+app/user/get_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"current_steps","type":"user_info","limit":1,"time_start":1493568000,"time_end":1490900914},
+}
+注：time，time_end都是当前时间戳，time_start是固定值1493568000 (2017/5/1 00:00:00)
+
+
+保存用户历史计步数据（时间相关）
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490814514,"key":"steps","value":{"start":1490814514,"end":1490816514,count:5234},"type":"user_info"},
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"steps","value":{"start":1490900914,"end":1490906914,count:5234},"type":"user_info"},
+}
+注：time为计步开始时间戳
+
+
+读取用户历史计步数据（时间相关）
+app/user/get_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"steps","type":"user_info","limit":20,"time_start":1493568000,"time_end":1490900914},
+}
+注：time是当前时间戳，time_start是固定值1493568000 (2017/5/1 00:00:00), time_end是计步开始时间
+
+
+
+
+保存设备电量数据
+app/user/set_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"battery","value":{"pd_id":"428","total":18000,"remain":67,"pu_clock":10,"pu_pedo":40,"pu_alarm":20,"pu_ble":30},"type":"prop"},
+}
+注：time为当前时间戳，如果不填，服务端会自动设为服务端当前时间戳
+pd_id	  产品ID：428（米家手表一代）
+total	  电池已使用时间，单位：分钟
+remain	  剩余电量百分比，例如：67
+pu_clock  耗电比例百分比，计时
+pu_pedo	  耗电比例百分比，计步
+pu_alarm  耗电比例百分比，振动提醒
+pu_ble	  耗电比例百分比，数据传输
+
+
+读取设备电量数据
+app/user/get_user_device_data
+"data"=
+{
+    {"uid":"XXX","did":"XXX","time":1490900914,"key":"battery","type":"prop","limit":1,"time_start":1493568000,"time_end":1490900914},
+}
+注：time，time_end都是当前时间戳，time_start是固定值1493568000 (2017/5/1 00:00:00)
+
+
+============================
+米家服务器配置文件上传/下载接口
+
+上传配置信息
+http://open.io.mi.com/open/third/openappconfig -d'data={"name":"test","version":1,"lang":"en","operation":"write","fileContent":"xxxxxxx","state":"1","content":"yy"}'
+name:配置信息的名字(必填) 
+version:版本号（整数，必填） 
+lang:语言（不分语言的话，可以随便写个其他的值，必填）
+operation:操作方式（只能取write或read其他字段无效，必填）
+fileContent:上传的配置内容（必填） 
+state:状态（整数，非必填，如果不使用可不上传） 
+content:配置内容的简要形式，可以在插件端做一个FALLBACK如果fileurl失效，可取content内容，但大小最好不要太大（非必填）
+
+读取配置信息http://open.io.mi.com/open/third/openappconfig -d'data={"name":"test","version":1,"lang":"en","operation":"read"}'
+返回参数 state fileurl content name version lang
+
+
+上传配置信息示例
+data={"name":"festival_china","version":2,"lang":"cn","operation":"write","fileContent":"xxxxxxx","content":"2"}
+data={"name":"world_city","version":3,"lang":"cn","operation":"write","fileContent":"xxxxxxx","content":"3"}
+data={"name":"config_version","version":1,"lang":"en","operation":"write","fileContent":"xxxxxxx","content":{'festival_china':2,'world_city':3}}
+注1：festival_china和world_city的version参数和content参数一致
+注2：config_version的version参数永远是1
+
+查询配置版本信息示例
+data={"name":"config_version","version":1,"lang":"en","operation":"read"}
+返回参数 state fileurl content name version lang
+"content":{'festival_china':2,'world_city':3}
+
+查询节假日列表文件下载地址示例
+data={"name":"festival_china","version":3,"lang":"en","operation":"read"}
+返回参数 state fileurl content name version lang
+"content":"3","fileurl":"xxxx"
+
+
+APP访问配置文件接口
+app/device/getThirdConfig -d'data={"name":"config_version","version":1,"lang":"en","app_id":"10103"}'
+
+

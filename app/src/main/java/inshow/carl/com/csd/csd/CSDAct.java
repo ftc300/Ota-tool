@@ -1,12 +1,19 @@
 package inshow.carl.com.csd.csd;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allenliu.badgeview.BadgeFactory;
 import com.allenliu.badgeview.BadgeView;
+import com.android.tu.loadingdialog.LoadingDailog;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 
 import java.util.HashSet;
@@ -27,12 +34,14 @@ import inshow.carl.com.csd.view.radar.RadarScanView;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
-
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.WRITE_SECURE_SETTINGS;
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
-import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_CONTROL;
-import static inshow.carl.com.csd.csd.core.CsdConstant.IN_SHOW_SERVICE;
+import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3102;
+import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_INSO;
 import static inshow.carl.com.csd.csd.core.CsdMgr.startScan;
+import static inshow.carl.com.csd.tools.Const.PERMISSION_REQ;
 
 /**
  * Created by chendong on 2018/6/25.
@@ -40,7 +49,7 @@ import static inshow.carl.com.csd.csd.core.CsdMgr.startScan;
 
 public class CSDAct extends BasicAct {
     @InjectView(R.id.img)
-    TextView img;
+    ImageView img;
     @InjectView(R.id.tip)
     TextView tip;
     BadgeView badgeView;
@@ -49,6 +58,7 @@ public class CSDAct extends BasicAct {
     final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
     private BleManager bleInstance = BleManager.getInstance();
     long lastTs;
+    LoadingDailog dialog;
     final ScanCallback callback = new ScanCallback() {
         @Override
         public void onScanFailed(int errorCode) {
@@ -71,7 +81,8 @@ public class CSDAct extends BasicAct {
         @Override
         public void onConnectStatusChanged(String mac, int status) {
             if (status == STATUS_CONNECTED) {
-                bleInstance.writeCharacteristic(mac, UUID.fromString(IN_SHOW_SERVICE), UUID.fromString(CHARACTERISTIC_CONTROL), new byte[]{3, 1, 0, 0});
+                dialog.dismiss();
+                bleInstance.writeCharacteristic(mac, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), new byte[]{3, 1, 0, 0});
                 Intent i = new Intent(context, TestWatchAct.class);
                 i.putExtra("MAC", mac);
                 startActivity(i);
@@ -86,7 +97,11 @@ public class CSDAct extends BasicAct {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_csd);
         ButterKnife.inject(this);
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,ACCESS_FINE_LOCATION,WRITE_SECURE_SETTINGS}, PERMISSION_REQ);
+        }
         CsdMgr.getInstance().setCheckFinished(new ICheckDeviceComplete() {
             @Override
             public void checkFinished(HashSet<MiWatch> set) {
@@ -102,19 +117,13 @@ public class CSDAct extends BasicAct {
                 }
             }
         });
-//       CsdMgr.getInstance().setCheckDevicePressed(new ICheckDevicePressed() {
-//           @Override
-//           public void miWatchPressed(String mac) {
-//               switchTo(PressedMiWatchAct.class);
-//           }
-//       });
 
         CsdMgr.getInstance().setCheckDevicePressed(new ICheckDevicePressed() {
             @Override
             public void miWatchPressed(String mac) {
                 L.d("PressedMiWatchAct miWatchPressed mac:" + mac);
                 if (System.currentTimeMillis() - lastTs > 20 * 1000) {
-                    showToast("检测到按压表冠，连接中...");
+                    showLoading();
                     lastTs = System.currentTimeMillis();
                     bleInstance.connect(mac);
                     bleInstance.register(mac, mBleConnectStatusListener);
@@ -122,6 +131,11 @@ public class CSDAct extends BasicAct {
             }
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -142,6 +156,15 @@ public class CSDAct extends BasicAct {
     protected void onDestroy() {
         super.onDestroy();
         scanner.stopScan(callback);
+    }
+
+    public void showLoading(){
+        LoadingDailog.Builder loadBuilder=new LoadingDailog.Builder(this)
+                .setMessage("检测到按压表\n冠，连接中...")
+                .setCancelable(false)
+                .setCancelOutside(false);
+        dialog=loadBuilder.create();
+        dialog.show();
     }
 
 }
