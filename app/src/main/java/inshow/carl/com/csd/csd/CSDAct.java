@@ -1,9 +1,13 @@
 package inshow.carl.com.csd.csd;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -142,7 +146,24 @@ public class CSDAct extends BasicAct {
     protected void onResume() {
         super.onResume();
         radarScanView.restartTask();
-        startScan(scanner, callback);
+        if(BleManager.getInstance().isBluetoothOpened()) {
+            startScan(scanner, callback);
+        }else{
+            showAlertDialog("提示", "请打开蓝牙", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    BleManager.getInstance().openBle();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(BleManager.getInstance().isBluetoothOpened()) {
+                                startScan(scanner, callback);
+                            }
+                        }
+                    },2000);
+                }
+            });
+        }
     }
 
     @Override
@@ -166,5 +187,16 @@ public class CSDAct extends BasicAct {
         dialog=loadBuilder.create();
         dialog.show();
     }
+
+    public void showAlertDialog(String t, String m, DialogInterface.OnClickListener positive) {
+        new AlertDialog.Builder(context)
+                .setTitle(t)
+                .setMessage(m)
+                .setCancelable(false)
+                .setPositiveButton("确定", positive)
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
 
 }

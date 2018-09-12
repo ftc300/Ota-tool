@@ -31,18 +31,20 @@ import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.bytes2Char;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getCurrentStep;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getCurrentTime;
+import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getPowerConsumption;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getSumPress;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.set0E;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setControlData;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setCurrentTime;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setVibrateData;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3102;
-import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3109;
-import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_DEVICE_INFO;
-import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_IMMEDIATE_ALERT;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3106;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3108;
+import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3109;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_310A;
+import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3300;
+import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_DEVICE_INFO;
+import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_IMMEDIATE_ALERT;
 import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_DEVICE_INFO;
 import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_IMMEDIATE_ALERT;
 import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_INSO;
@@ -57,6 +59,8 @@ public class TestWatchAct extends BasicAct {
     Button btnRecon;
     @InjectView(R.id.disconnect)
     Button btnDiscon;
+    @InjectView(R.id.btnRecovery)
+    Button btnRecovery;
     @InjectView(R.id.tvVersion)
     TextView tvVersion;
     @InjectView(R.id.tvCurrentStep)
@@ -65,6 +69,8 @@ public class TestWatchAct extends BasicAct {
     TextView tvState;
     @InjectView(R.id.tvPress)
     TextView tvPress;
+    @InjectView(R.id.tvBattery)
+    TextView tvBattery;
     private BleManager bleInstance = BleManager.getInstance();
     String MAC;
     @InjectView(R.id.tvMac)
@@ -80,6 +86,8 @@ public class TestWatchAct extends BasicAct {
     int GE10_HIGH_STEPS_PER_MOVE = 600;
     int GE10_STEPS_360 = 60;
     private int driveStep;
+    private int clickCount;
+    int batteryLevel  = -1;
     private final BleConnectStatusListener mBleConnectStatusListener = new BleConnectStatusListener() {
 
         @Override
@@ -141,7 +149,21 @@ public class TestWatchAct extends BasicAct {
                         showToast("操作失败");
                     }
                 });
+
+                BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3300), new BleManager.IReadOnResponse() {
+                    @Override
+                    public void onSuccess(byte[] data) {
+                        batteryLevel = getPowerConsumption(data)[0];
+                        tvBattery.setText(batteryLevel>30?"电量充足":"电量不足");
+                    }
+
+                    @Override
+                    public void onFail() {
+                        showToast("读取电量操作失败");
+                    }
+                });
             }
+
         }
         btnDiscon.setEnabled(true);
         btnRecon.setEnabled(false);
@@ -163,9 +185,17 @@ public class TestWatchAct extends BasicAct {
         return bleInstance.getBleState(MAC) == STATUS_CONNECTED;
     }
 
-    @OnClick({R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery})
+    @OnClick({R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.tvVersion:
+                if (clickCount > 7) {
+                    showToast("进入调试模式...");
+                    btnRecovery.setVisibility(View.VISIBLE);
+                } else {
+                    clickCount++;
+                }
+                break;
             case R.id.back:
                 finish();
                 break;
@@ -185,22 +215,22 @@ public class TestWatchAct extends BasicAct {
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
                     showToast("开始步针测试...");
                     if (currentStep == 0) {
-                       driveStep = 60;
+                        driveStep = 60;
                     } else if (currentStep < GE10_HIGH_RANGE) {
-                       driveStep = GE10_STEPS_360 - currentStep / GE10_LOW_STEPS_PER_MOVE;
+                        driveStep = GE10_STEPS_360 - currentStep / GE10_LOW_STEPS_PER_MOVE;
                     } else if (currentStep >= GE10_HIGH_RANGE && currentStep <= GE10_MAX_RANGE) {
-                       driveStep = GE10_STEPS_360 - GE10_HIGH_RANGE / GE10_LOW_STEPS_PER_MOVE - (currentStep - GE10_HIGH_RANGE) / GE10_HIGH_STEPS_PER_MOVE;
+                        driveStep = GE10_STEPS_360 - GE10_HIGH_RANGE / GE10_LOW_STEPS_PER_MOVE - (currentStep - GE10_HIGH_RANGE) / GE10_HIGH_STEPS_PER_MOVE;
                     } else if (currentStep > GE10_MAX_RANGE) {
-                       driveStep = 14;
+                        driveStep = 14;
                     }
                     L.d("driveStep:" + driveStep);
                     BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3106), ConvertDataMgr.setStepData(driveStep));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3108), new byte[]{0,0,0,0});
+                            BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3108), new byte[]{0, 0, 0, 0});
                         }
-                    },2000);
+                    }, 2000);
                 }
                 break;
             case R.id.btnHour:
@@ -225,10 +255,19 @@ public class TestWatchAct extends BasicAct {
                 }
                 break;
             case R.id.btnVibrate:
-                if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
-                    showToast("开始振动测试...");
-                    BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_IMMEDIATE_ALERT), UUID.fromString(CHARACTERISTIC_IMMEDIATE_ALERT), setVibrateData());
-                }
+                    if (batteryLevel == -1){
+                        showToast("稍等正在读取电量...");
+                        return;
+                    }
+                    if(batteryLevel < 30){
+                        showToast("电量低，无法开始振动测试...");
+                        return;
+                    }
+
+                    if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
+                        showToast("开始振动测试...");
+                        BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_IMMEDIATE_ALERT), UUID.fromString(CHARACTERISTIC_IMMEDIATE_ALERT), setVibrateData());
+                    }
                 break;
             case R.id.btnRecovery:
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
@@ -236,16 +275,17 @@ public class TestWatchAct extends BasicAct {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             showToast("恢复出厂设置中...");
+                            isPassive = false;
                             BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), setControlData(new int[]{1, 0, 0, 0}));
-                            long time = System.currentTimeMillis() /1000 -  951840000 ;
-                            BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), setCurrentTime((int)time));
+                            long time = System.currentTimeMillis() / 1000 - 951840000;
+                            BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), setCurrentTime((int) time));
                             BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), setControlData(new int[]{4, 0, 0, 0}));
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     finish();
                                 }
-                            },3000);
+                            }, 3000);
                         }
                     });
                 }
@@ -283,6 +323,7 @@ public class TestWatchAct extends BasicAct {
                     }
                 }
                 break;
+
         }
 
     }

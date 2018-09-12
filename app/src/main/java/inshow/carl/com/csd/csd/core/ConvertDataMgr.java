@@ -1,5 +1,7 @@
 package inshow.carl.com.csd.csd.core;
 
+import inshow.carl.com.csd.tools.L;
+
 /**
  * Created by chendong on 2018/7/30.
  */
@@ -85,6 +87,14 @@ public class ConvertDataMgr
         return result;
     }
 
+    public static int[] getPowerConsumption(byte[] b) {
+        int[] result = new int[4];
+        result[0] = b[0] & 0x0FF;
+        result[1] = (b[1] & 0x0FF) + ((b[2] & 0x0FF) << 8) + ((b[3] & 0x0FF) << 16) + ((b[4] & 0x0FF) << 24);
+        result[2] = b[5] & 0x0FF;
+        result[3] =(b[6] & 0x0FF) + ((b[7] & 0x0FF) << 8) + ((b[8] & 0x0FF) << 16) + ((b[9] & 0x0FF) << 24);
+        return result;
+    }
 
     public static String bytes2HexString(byte[] bytes) {
         if (bytes == null) return "";

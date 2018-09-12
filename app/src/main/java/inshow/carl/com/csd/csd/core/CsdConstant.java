@@ -16,4 +16,5 @@ public class CsdConstant {
     public static final String CHARACTERISTIC_3106 = "c99a3106-7f3c-4e85-bde2-92f2037bfd42";
     public static final String CHARACTERISTIC_3108 = "c99a3108-7f3c-4e85-bde2-92f2037bfd42";
     public static final String CHARACTERISTIC_310A = "c99a310A-7f3c-4e85-bde2-92f2037bfd42";
+    public static final String CHARACTERISTIC_3300 = "c99a3300-7f3c-4e85-bde2-92f2037bfd42";
 }

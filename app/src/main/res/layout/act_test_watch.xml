@@ -281,6 +281,48 @@
             android:background="@color/colorPrimary"
             android:layout_marginRight="20dp"/>
     </TableRow>
+    <View android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"/>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:freezesText="true"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="电池状态"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
+        <TextView
+            android:id="@+id/tvBattery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="N/A"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"/>
+        <View android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_marginRight="20dp"/>
+    </TableRow>
 
     <View android:layout_width="match_parent"
         android:layout_height="2px"
@@ -378,6 +420,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
+        android:visibility="gone"
         android:textColor="@color/white" />
 </LinearLayout>
 </ScrollView>

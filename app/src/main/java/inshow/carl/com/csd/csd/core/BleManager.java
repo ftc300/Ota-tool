@@ -44,8 +44,21 @@ public class BleManager {
 // Constants.STATUS_DEVICE_CONNECTING
 // Constants.STATUS_DEVICE_DISCONNECTING
 // Constants.STATUS_DEVICE_DISCONNECTED
+
+    public boolean isBluetoothOpened(){
+        return mClient.isBluetoothOpened();
+    }
+
+    public void openBle(){
+        mClient.openBluetooth();
+    }
+
     public  int getBleState(String MAC){
         return mClient.getConnectStatus(MAC);
+    }
+
+    public  boolean isConnected(String MAC){
+        return mClient.getConnectStatus(MAC) == Constants.STATUS_DEVICE_CONNECTED;
     }
 
     public void register(String MAC,BleConnectStatusListener mBleConnectStatusListener ){
