@@ -16,5 +16,55 @@
     <string name="phone">获取用户电话号码</string>
     <string name="demo_old_api">测试DeprecatedApi(不鼓励使用)</string>
     <string name="fast_oauth_btn">对话框 Oauth</string>
+    <string name="adjust_step_tip">滑动下方滚轮,\n使计步指针指示到0</string>
+    <string name="what_is_time">输入手表上指示的时间,\n而非当前标准时间</string>
+    <string name="next_step">下一步</string>
+    <string name="last_step">上一步</string>
+    <string name="adjust_sure">校准</string>
+    <string name="img_bottom_tip">点击滚轮可以微调指针</string>
+    <string name="button_ok">确定</string>
+    <string name="h_hand_position">时针位置</string>
+    <string name="m_hand_position">分针位置</string>
+    <string name="deal_with_accurate_pos">不确定分针精确位置怎么办？</string>
+    <string name="tap_to_exact_mark">点击转针按钮,\n让分针对齐整刻度</string>
+    <string name="move_hand">转针</string>
+    <string name="calibrate">校准</string>
+    <string name="tap_calibrate">点击校准按钮, 指针会自动转到正确时间</string>
+    <string name="reference_step_hand">手表步针显示的是概要步数，每走大约400步，\n步针才会行进一格</string>
+    <string name="xx_00">点击校准按钮, 步针会自动指向当前准确步数</string>
+    <string name="xx_01">点击或长按转针按钮，转动\n步针，通过不断点按，\n使步针指向0刻度</string>
+    <string name="xx_03">步针未动怎么回事?</string>
+    <string name="xx12">例如，手表指针显示为10点8分左右时，\n请把分针转到10点10分</string>
+    <string name="pls_set_pos">请输入手表的指针位置</string>
+    <string name="button_cancel">取消</string>
+    <string name="have_adjusted">已校准</string>
+    <string name="adjust_step_point">校准计步指针</string>
+    <string name="adjust_time_point">校准计时指针</string>
 
+    <string-array name="hour_positon">
+        <item>0</item>
+        <item>0-1</item>
+        <item>1</item>
+        <item>1-2</item>
+        <item>2</item>
+        <item>2-3</item>
+        <item>3</item>
+        <item>3-4</item>
+        <item>4</item>
+        <item>4-5</item>
+        <item>5</item>
+        <item>5-6</item>
+        <item>6</item>
+        <item>6-7</item>
+        <item>7</item>
+        <item>7-8</item>
+        <item>8</item>
+        <item>8-9</item>
+        <item>9</item>
+        <item>9-10</item>
+        <item>10</item>
+        <item>10-11</item>
+        <item>11</item>
+        <item>11-12</item>
+    </string-array>
 </resources>

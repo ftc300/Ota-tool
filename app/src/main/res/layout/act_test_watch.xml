@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    style="@style/Widget.List"
-    android:layout_width="match_parent">
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
+    style="@style/Widget.List"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="inshow.carl.com.csd.MainActivity"
-    >
+    tools:context="inshow.carl.com.csd.MainActivity">
+
     <FrameLayout
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPrimary">
+
         <TextView
             android:id="@+id/back"
             android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:ellipsize="end"
-            android:maxLines="1"
             android:drawableLeft="@drawable/back"
-            android:textColor="@color/headerTextColor"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
             android:padding="10dp"
+            android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
 
         <TextView
@@ -64,363 +61,509 @@
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
     </FrameLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="基本信息"
-        android:layout_margin="20dp"
-        android:textSize="16sp"
-        android:textColor="@color/colorPrimary"
-        android:freezesText="true" />
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp" />
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="20dp"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="middle"
-            android:gravity="center"
-            android:text="MAC地址"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"
-            android:freezesText="true" />
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-        <TextView
-            android:id="@+id/tvMac"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="N/A"
-            android:textSize="14sp"
-            android:padding="8dp"
-            android:textColor="@color/colorPrimary"/>
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginRight="20dp"/>
-    </TableRow>
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"/>
 
-    <TableRow
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/Widget.List"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="20dp"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="middle"
-            android:gravity="center"
-            android:text="版本信息"
-            android:textSize="14sp"
-            android:padding="8dp"
-            android:textColor="@color/colorPrimary"
-            android:freezesText="true" />
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-        <TextView
-            android:id="@+id/tvVersion"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="N/A"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginRight="20dp"/>
-    </TableRow>
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"/>
+        android:layout_height="match_parent">
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View android:layout_width="2px"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="20dp"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="middle"
-            android:padding="8dp"
-            android:gravity="center"
-            android:text="当前步数"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"
-            android:freezesText="true" />
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-        <TextView
-            android:id="@+id/tvCurrentStep"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="N/A"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginRight="20dp"/>
-    </TableRow>
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"/>
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="20dp"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="middle"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="按键次数"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"
-            android:freezesText="true" />
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-        <TextView
-            android:id="@+id/tvPress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="N/A"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginRight="20dp"/>
-    </TableRow>
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"/>
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="20dp"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="middle"
-            android:gravity="center"
-            android:text="连接状态"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"
-            android:padding="8dp"
-            android:freezesText="true" />
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-        <TextView
-            android:id="@+id/tvState"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="N/A"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginRight="20dp"/>
-    </TableRow>
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"/>
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="20dp"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ellipsize="middle"
-            android:freezesText="true"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="电池状态"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp" />
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-        <TextView
-            android:id="@+id/tvBattery"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="N/A"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <View android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginRight="20dp"/>
-    </TableRow>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:freezesText="true"
+                android:gravity="center"
+                android:text="基本信息"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
 
-    <View android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/colorPrimary"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"/>
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
-    <Button
-        android:id="@+id/reconnect"
-        android:layout_width="0dp"
-        android:layout_height="38dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:enabled="false"
-        android:background="@drawable/btn_bg"
-        android:layout_gravity="center"
-        android:text="重新连接"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/white" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
 
-    <Button
-        android:id="@+id/disconnect"
-        android:layout_width="0dp"
-        android:layout_height="38dp"
-        android:layout_weight="1"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:gravity="center"
-        android:background="@drawable/btn_bg"
-        android:layout_gravity="center"
-        android:text="断开连接"
-        android:textColor="@color/white" />
-    </TableRow>
-    <Button
-        android:id="@+id/btnStep"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:gravity="center"
-        android:background="@drawable/btn_bg"
-        android:layout_gravity="center"
-        android:text="步针转一圈"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/white" />
-    <Button
-        android:id="@+id/btnHour"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:gravity="center"
-        android:background="@drawable/btn_bg"
-        android:layout_gravity="center"
-        android:text="分针转一圈"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/white" />
-    <Button
-        android:id="@+id/btnVibrate"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:gravity="center"
-        android:background="@drawable/btn_bg"
-        android:layout_gravity="center"
-        android:text="振动"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/white" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btnPress"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:gravity="center"
-        android:background="@drawable/btn_bg"
-        android:layout_gravity="center"
-        android:text="按键测试"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/white" />
-    <Button
-        android:id="@+id/btnRecovery"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:gravity="center"
-        android:background="@drawable/btn_bg_red"
-        android:layout_gravity="center"
-        android:text="恢复出厂设置"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:visibility="gone"
-        android:textColor="@color/white" />
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="MAC地址"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvMac"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="版本信息"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvVersion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="当前步数"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvCurrentStep"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="按键次数"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvPress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="连接状态"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvState"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="电池状态"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvBattery"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="手表内部时间"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvRtcTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="N/A"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/colorPrimary" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@color/colorPrimary" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/reconnect"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_b"
+                    android:enabled="false"
+                    android:gravity="center"
+                    android:text="重新连接"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/disconnect"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_b"
+                    android:gravity="center"
+                    android:text="断开连接"
+                    android:textColor="@color/white" />
+            </TableRow>
+
+            <Button
+                android:id="@+id/btnStep"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_b"
+                android:gravity="center"
+                android:text="步针转一圈"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btnHour"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_b"
+                android:gravity="center"
+                android:text="分针转一圈"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btnVibrate"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_b"
+                android:gravity="center"
+                android:text="振动"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btnPress"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_b"
+                android:gravity="center"
+                android:text="按键测试"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btnRecovery"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_bg_red"
+                android:gravity="center"
+                android:text="恢复出厂设置"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/adjust"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_b"
+                android:gravity="center"
+                android:text="校准"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
-</ScrollView>

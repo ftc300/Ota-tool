@@ -1,7 +1,10 @@
 package inshow.carl.com.csd.csd;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +23,7 @@ import com.allenliu.badgeview.BadgeView;
 import com.android.tu.loadingdialog.LoadingDailog;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -32,12 +36,14 @@ import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.CsdMgr;
 import inshow.carl.com.csd.csd.iface.ICheckDeviceComplete;
 import inshow.carl.com.csd.csd.iface.ICheckDevicePressed;
+import inshow.carl.com.csd.csd.silentcamera.CapPhotoService;
 import inshow.carl.com.csd.entity.MiWatch;
 import inshow.carl.com.csd.tools.L;
 import inshow.carl.com.csd.view.radar.RadarScanView;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.WRITE_SECURE_SETTINGS;
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
@@ -63,6 +69,7 @@ public class CSDAct extends BasicAct {
     private BleManager bleInstance = BleManager.getInstance();
     long lastTs;
     LoadingDailog dialog;
+    Intent service;
     final ScanCallback callback = new ScanCallback() {
         @Override
         public void onScanFailed(int errorCode) {
@@ -101,10 +108,21 @@ public class CSDAct extends BasicAct {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_csd);
         ButterKnife.inject(this);
+        /////////
+        Calendar cal = Calendar.getInstance();
+        service = new Intent(getBaseContext(), CapPhotoService.class);
+        cal.add(Calendar.SECOND, 15);
+        //TAKE PHOTO EVERY 15 SECONDS
+        PendingIntent pintent = PendingIntent.getService(this, 0, service, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                2000, pintent);
+        startService(service);
+        /////////
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 ) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,ACCESS_FINE_LOCATION,WRITE_SECURE_SETTINGS}, PERMISSION_REQ);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION, WRITE_SECURE_SETTINGS}, PERMISSION_REQ);
         }
         CsdMgr.getInstance().setCheckFinished(new ICheckDeviceComplete() {
             @Override
@@ -146,9 +164,9 @@ public class CSDAct extends BasicAct {
     protected void onResume() {
         super.onResume();
         radarScanView.restartTask();
-        if(BleManager.getInstance().isBluetoothOpened()) {
+        if (BleManager.getInstance().isBluetoothOpened()) {
             startScan(scanner, callback);
-        }else{
+        } else {
             showAlertDialog("提示", "请打开蓝牙", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -156,11 +174,11 @@ public class CSDAct extends BasicAct {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(BleManager.getInstance().isBluetoothOpened()) {
+                            if (BleManager.getInstance().isBluetoothOpened()) {
                                 startScan(scanner, callback);
                             }
                         }
-                    },2000);
+                    }, 2000);
                 }
             });
         }
@@ -179,12 +197,12 @@ public class CSDAct extends BasicAct {
         scanner.stopScan(callback);
     }
 
-    public void showLoading(){
-        LoadingDailog.Builder loadBuilder=new LoadingDailog.Builder(this)
+    public void showLoading() {
+        LoadingDailog.Builder loadBuilder = new LoadingDailog.Builder(this)
                 .setMessage("检测到按压表\n冠，连接中...")
                 .setCancelable(false)
                 .setCancelOutside(false);
-        dialog=loadBuilder.create();
+        dialog = loadBuilder.create();
         dialog.show();
     }
 

@@ -16,11 +16,12 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
     <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
@@ -52,7 +53,7 @@
             <!--</intent-filter>-->
         <!--</activity>-->
         <!---->
-        <activity android:name="inshow.carl.com.csd.csd.CSDAct"
+        <activity android:name=".csd.CSDAct"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -69,10 +70,19 @@
             <!--</intent-filter>-->
         <!--</activity>-->
         <activity android:name="inshow.carl.com.csd.DfuAct"/>
-        <activity android:name="inshow.carl.com.csd.WeChatCaptureActivity"/>
+        <!--<activity android:name="inshow.carl.com.csd.WeChatCaptureActivity"/>-->
         <activity android:name="inshow.carl.com.csd.csd.TestWatchAct"
             android:configChanges="orientation|screenSize"/>
         <activity android:name="com.xiaomi.account.openauth.AuthorizeActivity" />
+        <activity android:name=".csd.adjust.AdjustMainAct" />
+        <activity android:name=".csd.adjust.NewAdjustStepFirstAct" />
+        <activity android:name=".csd.adjust.NewAdjustStepSecAct" />
+        <activity android:name=".csd.adjust.NewAdjustTimeFirstAct" />
+        <activity android:name=".csd.adjust.NewAdjustTimeSecAct" />
+        <activity android:name=".csd.adjust.NewAdjustTimeThirdAct" />
+        <!--<activity android:name=".csd.silentcamera.SilentCameraMainActivity" />-->
+
+        <!--<service android:name=".csd.silentcamera.CapPhotoService" android:enabled="true"/>-->
     </application>
 
 </manifest>

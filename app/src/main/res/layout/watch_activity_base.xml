@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/act_base"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:id="@+id/act_base_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+      >
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/act_base_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/act_base"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="15dp"
+        android:background="@color/black_10_transparent"/>
+    <inshow.carl.com.csd.view.WatchNumberPicker
+            android:id="@+id/lp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:text="厘米"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_gravity="center"
+     />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/black_10_transparent"/>
+</LinearLayout>

@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/watch_gray"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/adjust_step_tip"
+        android:textColor="@color/black_80_transparent"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_marginTop="15dp"/>
+
+    <FrameLayout
+        android:id="@+id/contentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/tv_tip_01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/img_bottom_tip"
+        android:textColor="@color/dialog_sub_title_txt_color_sel"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:visibility="gone"
+        android:layout_marginTop="15dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/watch_common_button"
+        style="?android:attr/borderlessButtonStyle"
+        android:textColor="@drawable/btn_text_bg_selector"
+        android:layout_margin="30dp"
+        android:layout_alignParentBottom="true"
+        android:text="@string/button_ok"
+        android:id="@+id/ok" />
+
+</LinearLayout>

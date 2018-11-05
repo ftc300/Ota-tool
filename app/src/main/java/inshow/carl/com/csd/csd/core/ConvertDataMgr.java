@@ -8,7 +8,30 @@ import inshow.carl.com.csd.tools.L;
 
 public class ConvertDataMgr
 {
+    public static byte[] I2B_Control(int[] value) {
+        byte[] src = new byte[4];
+        src[3] = (byte) (value[3] & 0x0FF);
+        src[2] = (byte) (value[2] & 0x0FF);
+        src[1] = (byte) (value[1] & 0x0FF);
+        src[0] = (byte) (value[0] & 0x0FF);
+        return src;
+    }
 
+    //通知手表它显示的时间
+    public static byte[] I2B_WatchTime( int modeTime) {
+        byte[] src = new byte[4];
+        src[3] = (byte) ((modeTime >> 24) & 0x0FF);
+        src[2] = (byte) ((modeTime >> 16) & 0x0FF);
+        src[1] = (byte) ((modeTime >> 8) & 0x0FF);
+        src[0] = (byte) (modeTime & 0x0FF);
+        return src;
+    }
+
+    public static byte[] I2B_OneBit(int value) {
+        byte[] src = new byte[1];
+        src[0] = (byte) (value & 0x0FF);
+        return src;
+    }
 
 
     public static int getCurrentTime(byte[] b) {

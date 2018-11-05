@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:inshow="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/watch_gray">
+
+
+    <inshow.carl.com.csd.view.LabelTextRow
+        android:layout_marginTop="50dp"
+        android:id="@+id/hourLocation"
+        style="@style/label_text_row"
+        inshow:labelDividerIndent="24dp"
+        inshow:labelBottomDivider="false"
+        inshow:labelValueColor="@color/colorPrimary"
+        inshow:labelTopDivider="false"
+        inshow:labelText="@string/h_hand_position"
+        inshow:labelValue="--"
+
+        />
+
+    <inshow.carl.com.csd.view.LabelTextRow
+        android:layout_marginTop="20dp"
+        android:id="@+id/minLocation"
+        style="@style/label_text_row"
+        inshow:labelDividerIndent="24dp"
+        inshow:labelBottomDivider="false"
+        inshow:labelTopDivider="false"
+        inshow:labelText="@string/m_hand_position"
+        inshow:labelValueColor="@color/colorPrimary"
+        inshow:labelValue="--"
+        />
+
+    <TextView
+        android:id="@+id/tv_accurate"
+        android:text="@string/deal_with_accurate_pos"
+        style="@style/content_text_tip" />
+
+</LinearLayout>

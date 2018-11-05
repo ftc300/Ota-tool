@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/watch_gray">
+    <TextView
+        android:id="@+id/tvContentTip"
+        style="@style/text_tip"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="@string/xx_03"
+        />
+</FrameLayout>

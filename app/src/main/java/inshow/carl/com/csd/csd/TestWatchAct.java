@@ -1,7 +1,9 @@
 package inshow.carl.com.csd.csd;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,13 +24,17 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import inshow.carl.com.csd.BasicAct;
 import inshow.carl.com.csd.R;
+import inshow.carl.com.csd.csd.adjust.AdjustMainAct;
 import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.ConvertDataMgr;
+import inshow.carl.com.csd.csd.core.SPManager;
 import inshow.carl.com.csd.tools.L;
 
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DEVICE_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
+import static inshow.carl.com.csd.csd.basic.AdjustBasicAct.EXTRAS_EVENT_BUS;
+import static inshow.carl.com.csd.csd.basic.AdjustBasicAct.EXTRAS_EVENT_MAC;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.bytes2Char;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getCurrentStep;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getCurrentTime;
@@ -71,6 +78,8 @@ public class TestWatchAct extends BasicAct {
     TextView tvPress;
     @InjectView(R.id.tvBattery)
     TextView tvBattery;
+    @InjectView(R.id.tvRtcTime)
+    TextView mTvRtcTime;
     private BleManager bleInstance = BleManager.getInstance();
     String MAC;
     @InjectView(R.id.tvMac)
@@ -87,7 +96,7 @@ public class TestWatchAct extends BasicAct {
     int GE10_STEPS_360 = 60;
     private int driveStep;
     private int clickCount;
-    int batteryLevel  = -1;
+    int batteryLevel = -1;
     private final BleConnectStatusListener mBleConnectStatusListener = new BleConnectStatusListener() {
 
         @Override
@@ -119,6 +128,7 @@ public class TestWatchAct extends BasicAct {
         setContentView(R.layout.act_test_watch);
         ButterKnife.inject(this);
         MAC = getIntent().getStringExtra("MAC");
+        SPManager.put(context,EXTRAS_EVENT_MAC,MAC);
         currentStep = -1;
         if (!TextUtils.isEmpty(MAC)) {
             isPassive = true;
@@ -154,7 +164,7 @@ public class TestWatchAct extends BasicAct {
                     @Override
                     public void onSuccess(byte[] data) {
                         batteryLevel = getPowerConsumption(data)[0];
-                        tvBattery.setText(batteryLevel>30?"电量充足":"电量不足");
+                        tvBattery.setText(batteryLevel > 30 ? "电量充足" : "电量不足");
                     }
 
                     @Override
@@ -162,6 +172,22 @@ public class TestWatchAct extends BasicAct {
                         showToast("读取电量操作失败");
                     }
                 });
+                BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), new BleManager.IReadOnResponse() {
+                    @Override
+                    public void onSuccess(byte[] data) {
+                        int currentTime = getCurrentTime(data);
+                        long delta = new Date().getTime()/1000 - 951840000 - currentTime;
+                        L.d("currentTime:" + currentTime + ",delta = " + delta);
+                        mTvRtcTime.setText(delta < 2*60 ?"正常":"超标");
+                        mTvRtcTime.setBackgroundResource(delta < 2*60?android.R.color.holo_green_light:android.R.color.holo_red_light);
+                    }
+
+                    @Override
+                    public void onFail() {
+                        showToast("操作失败");
+                    }
+                });
+
             }
 
         }
@@ -185,9 +211,14 @@ public class TestWatchAct extends BasicAct {
         return bleInstance.getBleState(MAC) == STATUS_CONNECTED;
     }
 
-    @OnClick({R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
+    @OnClick({R.id.adjust,R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.adjust:
+                Intent intent = new Intent(TestWatchAct.this, AdjustMainAct.class);
+                intent.putExtra(EXTRAS_EVENT_BUS,true);
+                startActivity(intent);
+                break;
             case R.id.tvVersion:
                 if (clickCount > 7) {
                     showToast("进入调试模式...");
@@ -255,19 +286,19 @@ public class TestWatchAct extends BasicAct {
                 }
                 break;
             case R.id.btnVibrate:
-                    if (batteryLevel == -1){
-                        showToast("稍等正在读取电量...");
-                        return;
-                    }
-                    if(batteryLevel < 30){
-                        showToast("电量低，无法开始振动测试...");
-                        return;
-                    }
+                if (batteryLevel == -1) {
+                    showToast("稍等正在读取电量...");
+                    return;
+                }
+                if (batteryLevel < 30) {
+                    showToast("电量低，无法开始振动测试...");
+                    return;
+                }
 
-                    if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
-                        showToast("开始振动测试...");
-                        BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_IMMEDIATE_ALERT), UUID.fromString(CHARACTERISTIC_IMMEDIATE_ALERT), setVibrateData());
-                    }
+                if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
+                    showToast("开始振动测试...");
+                    BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_IMMEDIATE_ALERT), UUID.fromString(CHARACTERISTIC_IMMEDIATE_ALERT), setVibrateData());
+                }
                 break;
             case R.id.btnRecovery:
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
@@ -291,6 +322,7 @@ public class TestWatchAct extends BasicAct {
                 }
                 break;
             case R.id.btnPress:
+
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
                     showAlertDialog("按键测试", i == 0 ? "请在10s内连续按压表冠，并观察基本信息栏中按键次数变化。" : "基本信息栏中按键次数会被清零，并重新开启10s监测按压表冠任务。", new DialogInterface.OnClickListener() {
                         @Override
