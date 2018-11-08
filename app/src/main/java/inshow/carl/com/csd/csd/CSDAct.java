@@ -92,7 +92,9 @@ public class CSDAct extends BasicAct {
         @Override
         public void onConnectStatusChanged(String mac, int status) {
             if (status == STATUS_CONNECTED) {
-                dialog.dismiss();
+                if(null!=dialog){
+                    dialog.dismiss();
+                }
                 bleInstance.writeCharacteristic(mac, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), new byte[]{3, 1, 0, 0});
                 Intent i = new Intent(context, TestWatchAct.class);
                 i.putExtra("MAC", mac);
@@ -144,11 +146,16 @@ public class CSDAct extends BasicAct {
             @Override
             public void miWatchPressed(String mac) {
                 L.d("PressedMiWatchAct miWatchPressed mac:" + mac);
-                if (System.currentTimeMillis() - lastTs > 20 * 1000) {
-                    showLoading();
-                    lastTs = System.currentTimeMillis();
-                    bleInstance.connect(mac);
-                    bleInstance.register(mac, mBleConnectStatusListener);
+                try {
+                    if (System.currentTimeMillis() - lastTs > 20 * 1000) {
+                        showLoading(mac.split(":")[4]+mac.split(":")[5]);
+                        lastTs = System.currentTimeMillis();
+                        bleInstance.connect(mac);
+                        bleInstance.register(mac, mBleConnectStatusListener);
+                    }
+                } catch (Exception arg_e) {
+                    arg_e.printStackTrace();
+                    showToast("connect error");
                 }
             }
         });
@@ -197,9 +204,9 @@ public class CSDAct extends BasicAct {
         scanner.stopScan(callback);
     }
 
-    public void showLoading() {
+    public void showLoading(String endMac) {
         LoadingDailog.Builder loadBuilder = new LoadingDailog.Builder(this)
-                .setMessage("检测到按压表\n冠，连接中...")
+                .setMessage("检测到"+ endMac +"按压表冠连接中" )
                 .setCancelable(false)
                 .setCancelOutside(false);
         dialog = loadBuilder.create();

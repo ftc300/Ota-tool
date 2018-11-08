@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.tu.loadingdialog.LoadingDailog;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 
 import java.util.Date;
@@ -178,8 +179,8 @@ public class TestWatchAct extends BasicAct {
                         int currentTime = getCurrentTime(data);
                         long delta = new Date().getTime()/1000 - 951840000 - currentTime;
                         L.d("currentTime:" + currentTime + ",delta = " + delta);
-                        mTvRtcTime.setText(delta < 2*60 ?"正常":"超标");
-                        mTvRtcTime.setBackgroundResource(delta < 2*60?android.R.color.holo_green_light:android.R.color.holo_red_light);
+                        mTvRtcTime.setText(Math.abs(delta) < 2*60 ?"正常":"超标");
+                        mTvRtcTime.setBackgroundResource(Math.abs(delta) < 2*60?R.color.green:R.color.red);
                     }
 
                     @Override
@@ -197,10 +198,6 @@ public class TestWatchAct extends BasicAct {
 
     @Override
     protected void onDestroy() {
-        bleInstance.disConnect(MAC);
-        if (!TextUtils.isEmpty(MAC)) {
-            bleInstance.unRegister(MAC, mBleConnectStatusListener);
-        }
         if (null != scheduledExecutorService) {
             scheduledExecutorService.shutdownNow();
         }
@@ -228,7 +225,8 @@ public class TestWatchAct extends BasicAct {
                 }
                 break;
             case R.id.back:
-                finish();
+                L.d("press back button");
+                delayfinish();
                 break;
             case R.id.disconnect:
                 showToast("断开连接中...");
@@ -370,4 +368,36 @@ public class TestWatchAct extends BasicAct {
                 .setNegativeButton("取消", null)
                 .show();
     }
+
+    @Override
+    public void onBackPressed() {
+        delayfinish();
+    }
+
+    private void delayfinish(){
+        if (!TextUtils.isEmpty(MAC)) {
+            bleInstance.unRegister(MAC, mBleConnectStatusListener);
+        }
+        bleInstance.disConnect(MAC);
+        LoadingDailog.Builder loadBuilder = new LoadingDailog.Builder(this)
+                .setMessage("请不要按压表冠退出中")
+                .setCancelable(false)
+                .setCancelOutside(false);
+        final LoadingDailog dialog = loadBuilder.create();
+        dialog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+
+            }
+        },5000);
+    }
+
 }
