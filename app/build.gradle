@@ -45,5 +45,7 @@ dependencies {
     compile 'com.github.gittjy:LoadingDialog:1.0.2'
     compile 'cjt.library.wheel:camera:1.1.9'
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
 }

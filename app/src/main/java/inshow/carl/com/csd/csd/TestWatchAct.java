@@ -1,6 +1,5 @@
 package inshow.carl.com.csd.csd;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,7 +28,12 @@ import inshow.carl.com.csd.csd.adjust.AdjustMainAct;
 import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.ConvertDataMgr;
 import inshow.carl.com.csd.csd.core.SPManager;
+import inshow.carl.com.csd.csd.http.WatchInfo;
 import inshow.carl.com.csd.tools.L;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.POST;
 
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DEVICE_CONNECTED;
@@ -129,7 +133,7 @@ public class TestWatchAct extends BasicAct {
         setContentView(R.layout.act_test_watch);
         ButterKnife.inject(this);
         MAC = getIntent().getStringExtra("MAC");
-        SPManager.put(context,EXTRAS_EVENT_MAC,MAC);
+        SPManager.put(context, EXTRAS_EVENT_MAC, MAC);
         currentStep = -1;
         if (!TextUtils.isEmpty(MAC)) {
             isPassive = true;
@@ -177,10 +181,10 @@ public class TestWatchAct extends BasicAct {
                     @Override
                     public void onSuccess(byte[] data) {
                         int currentTime = getCurrentTime(data);
-                        long delta = new Date().getTime()/1000 - 951840000 - currentTime;
+                        long delta = new Date().getTime() / 1000 - 951840000 - currentTime;
                         L.d("currentTime:" + currentTime + ",delta = " + delta);
-                        mTvRtcTime.setText(Math.abs(delta) < 2*60 ?"正常":"超标");
-                        mTvRtcTime.setBackgroundResource(Math.abs(delta) < 2*60?R.color.green:R.color.red);
+                        mTvRtcTime.setText(Math.abs(delta) < 2 * 60 ? "正常" : "超标");
+                        mTvRtcTime.setBackgroundResource(Math.abs(delta) < 2 * 60 ? R.color.green : R.color.red);
                     }
 
                     @Override
@@ -208,12 +212,12 @@ public class TestWatchAct extends BasicAct {
         return bleInstance.getBleState(MAC) == STATUS_CONNECTED;
     }
 
-    @OnClick({R.id.adjust,R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
+    @OnClick({R.id.adjust, R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.adjust:
                 Intent intent = new Intent(TestWatchAct.this, AdjustMainAct.class);
-                intent.putExtra(EXTRAS_EVENT_BUS,true);
+                intent.putExtra(EXTRAS_EVENT_BUS, true);
                 startActivity(intent);
                 break;
             case R.id.tvVersion:
@@ -374,7 +378,7 @@ public class TestWatchAct extends BasicAct {
         delayfinish();
     }
 
-    private void delayfinish(){
+    private void delayfinish() {
         if (!TextUtils.isEmpty(MAC)) {
             bleInstance.unRegister(MAC, mBleConnectStatusListener);
         }
@@ -397,7 +401,21 @@ public class TestWatchAct extends BasicAct {
                 });
 
             }
-        },5000);
+        }, 5000);
     }
 
+    //  使用Retrofit封装的方法
+    private void request() { //步骤4:创建Retrofit对象
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://fy.iciba.com/").addConverterFactory(GsonConverterFactory.create()).build();
+    }
+
+    //采用 注解 描述 网络请求参数
+    public interface GetRequestInterface {
+        // 注解里传入 网络请求 的部分URL地址 // Retrofit把网络请求的URL分成了两部分：一部分放在Retrofit对象里，
+        // 另一部分放在网络请求接口里 // 如果接口里的url是一个完整的网址，那么放在Retrofit对象里的URL可以忽略 // getCall()是接受网络请求数据的方法
+        @POST("ajax.php?a=fy&f=auto&t=auto&w=你好")
+        Call<WatchInfo> getCall();
+    }
 }
+
+
