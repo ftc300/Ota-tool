@@ -14,6 +14,7 @@ import inshow.carl.com.csd.csd.core.BleManager;
 
 
 public class AppController extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();

@@ -70,6 +70,8 @@ public class CSDAct extends BasicAct {
     long lastTs;
     LoadingDailog dialog;
     Intent service;
+    String KEY="625202f9149e061d";
+    String  IV ="5efd3f6060e20330";
     final ScanCallback callback = new ScanCallback() {
         @Override
         public void onScanFailed(int errorCode) {
@@ -99,6 +101,7 @@ public class CSDAct extends BasicAct {
                 Intent i = new Intent(context, TestWatchAct.class);
                 i.putExtra("MAC", mac);
                 startActivity(i);
+                finish();
             } else if (status == STATUS_DISCONNECTED) {
                 bleInstance.unRegister(mac, mBleConnectStatusListener);
             }
@@ -109,6 +112,7 @@ public class CSDAct extends BasicAct {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_csd);
+        HttpUtils.getRequestQueue(this).add(HttpUtils.postString("http://api.inshowlife.com/v1/client/check",AesEncryptionUtil.encrypt("inshow",KEY,IV)));
         ButterKnife.inject(this);
         /////////
         Calendar cal = Calendar.getInstance();
@@ -145,7 +149,7 @@ public class CSDAct extends BasicAct {
         CsdMgr.getInstance().setCheckDevicePressed(new ICheckDevicePressed() {
             @Override
             public void miWatchPressed(String mac) {
-                L.d("PressedMiWatchAct miWatchPressed mac:" + mac);
+//                L.d("PressedMiWatchAct miWatchPressed mac:" + mac);
                 try {
                     if (System.currentTimeMillis() - lastTs > 20 * 1000) {
                         showLoading(mac.split(":")[4]+mac.split(":")[5]);
@@ -222,6 +226,7 @@ public class CSDAct extends BasicAct {
                 .setNegativeButton("取消", null)
                 .show();
     }
+
 
 
 }

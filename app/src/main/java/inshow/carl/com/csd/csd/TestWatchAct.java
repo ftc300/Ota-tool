@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.tu.loadingdialog.LoadingDailog;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -28,12 +29,7 @@ import inshow.carl.com.csd.csd.adjust.AdjustMainAct;
 import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.ConvertDataMgr;
 import inshow.carl.com.csd.csd.core.SPManager;
-import inshow.carl.com.csd.csd.http.WatchInfo;
 import inshow.carl.com.csd.tools.L;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.POST;
 
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DEVICE_CONNECTED;
@@ -181,10 +177,11 @@ public class TestWatchAct extends BasicAct {
                     @Override
                     public void onSuccess(byte[] data) {
                         int currentTime = getCurrentTime(data);
-                        long delta = new Date().getTime() / 1000 - 951840000 - currentTime;
+                        long delta = System.currentTimeMillis() / 1000 - 951840000 - currentTime;
                         L.d("currentTime:" + currentTime + ",delta = " + delta);
-                        mTvRtcTime.setText(Math.abs(delta) < 2 * 60 ? "正常" : "超标");
-                        mTvRtcTime.setBackgroundResource(Math.abs(delta) < 2 * 60 ? R.color.green : R.color.red);
+                        boolean b = Math.abs(delta) < 2 * 60 ||  Math.abs(delta)%3600 <2*60;
+                        mTvRtcTime.setText( b? "正常" : "超标");
+                        mTvRtcTime.setBackgroundResource(b? R.color.green : R.color.red);
                     }
 
                     @Override
@@ -199,6 +196,8 @@ public class TestWatchAct extends BasicAct {
         btnDiscon.setEnabled(true);
         btnRecon.setEnabled(false);
     }
+
+
 
     @Override
     protected void onDestroy() {
@@ -396,25 +395,14 @@ public class TestWatchAct extends BasicAct {
                     @Override
                     public void run() {
                         dialog.dismiss();
+                        Intent i = new Intent(context, CSDAct.class);
+                        startActivity(i);
                         finish();
                     }
                 });
 
             }
         }, 5000);
-    }
-
-    //  使用Retrofit封装的方法
-    private void request() { //步骤4:创建Retrofit对象
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://fy.iciba.com/").addConverterFactory(GsonConverterFactory.create()).build();
-    }
-
-    //采用 注解 描述 网络请求参数
-    public interface GetRequestInterface {
-        // 注解里传入 网络请求 的部分URL地址 // Retrofit把网络请求的URL分成了两部分：一部分放在Retrofit对象里，
-        // 另一部分放在网络请求接口里 // 如果接口里的url是一个完整的网址，那么放在Retrofit对象里的URL可以忽略 // getCall()是接受网络请求数据的方法
-        @POST("ajax.php?a=fy&f=auto&t=auto&w=你好")
-        Call<WatchInfo> getCall();
     }
 }
 

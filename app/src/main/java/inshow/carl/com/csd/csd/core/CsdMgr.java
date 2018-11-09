@@ -4,10 +4,13 @@ import android.os.ParcelUuid;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import inshow.carl.com.csd.csd.iface.ICheckDeviceComplete;
 import inshow.carl.com.csd.csd.iface.ICheckDevicePressed;
@@ -19,6 +22,8 @@ import no.nordicsemi.android.support.v18.scanner.ScanFilter;
 import no.nordicsemi.android.support.v18.scanner.ScanRecord;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
+
+import static inshow.carl.com.csd.csd.core.ConvertDataMgr.bytes2HexString;
 
 /**
  * Created by chendong on 2018/6/25.
@@ -32,7 +37,9 @@ public class CsdMgr {
     private static volatile CsdMgr mInstance;
     private ICheckDevicePressed checkDevicePressed;
     private ICheckDeviceComplete checkFinished;
-
+    ConcurrentHashMap<String ,Integer> hashMap = new ConcurrentHashMap<>();
+    int count = -1;
+    String cMac;
     private CsdMgr() {
     }
 
@@ -60,6 +67,7 @@ public class CsdMgr {
     public synchronized void checkDevice(List<ScanResult> results) {
         for (ScanResult result : results) {
             try {
+                cMac = result.getDevice().getAddress();
                 ScanRecord record = result.getScanRecord();
                 Map<ParcelUuid, byte[]> map = record.getServiceData();
                 Iterator<Map.Entry<ParcelUuid, byte[]>> it = map.entrySet().iterator();
@@ -69,21 +77,31 @@ public class CsdMgr {
                     byte[] b = map.get(key);
                     //有米家的service uuid 并且有手表的产品id : AC01
                     if (isMiWatch(key, b)) {
+//                        L.d("isMiWatch:"+ bytes2HexString(b));
                         if (isMiWatchNormal(b)) {
-                            L.d("MiWatchNormal:" + result.getDevice().getAddress());
-                            set.add(new MiWatch(result.getDevice().getAddress(), false));
+//                            L.d("MiWatchNormal:" + result.getDevice().getAddress() + ",isMiWatchNormal"+ bytes2HexString(b));
+                            set.add(new MiWatch(cMac, false));
                         } else if (isMiWatchPressed(b)) {
-                            boolean flag = set.add(new MiWatch(result.getDevice().getAddress(), true));
+                            L.d("isMiWatchPressed:" +key.toString() + ",b:"+ bytes2HexString(b));
+                            try {
+                                count = hashMap.get(cMac);
+                            }catch (Exception e){
+                                count = -1;
+                            }
+                            hashMap.put(cMac,count+1);
+                            boolean flag = set.add(new MiWatch(cMac, true));
                             if (!flag) {
                                 for (MiWatch watch : set) {
-                                    if(TextUtils.equals(watch.mac,result.getDevice().getAddress())){
+                                    if(TextUtils.equals(watch.mac,cMac)){
                                         watch.pressed = true;
                                     }
                                 }
                             }
-                            L.d("MiWatchPressed:" + result.getDevice().getAddress());
-                            if (checkDevicePressed != null) {
-                                checkDevicePressed.miWatchPressed(result.getDevice().getAddress());
+//                            L.d("MiWatchPressed:" + cMac);
+                            if (checkDevicePressed != null&& hashMap.get(cMac)>1) {
+                                hashMap.put(cMac,-1);
+                                count = -1;
+                                checkDevicePressed.miWatchPressed(cMac);
                             }
                         }
                     }

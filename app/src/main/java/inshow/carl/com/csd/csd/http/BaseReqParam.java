@@ -8,9 +8,10 @@ package inshow.carl.com.csd.csd.http;
  * GitHub: https://github.com/ftc300
  */
 
-public class BaseReqParam {
+public class BaseReqParam<T> {
     int time;
     String mac;
     String key;
     String version;
+    T t;
 }
