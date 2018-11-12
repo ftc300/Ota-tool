@@ -18,6 +18,7 @@ import inshow.carl.com.csd.csd.basic.BasicSingleButtonAct;
 public class NewAdjustStepSecAct extends BasicSingleButtonAct {
     TextView contentTip;
 
+
     @Override
     protected void btnOnClick() {
         EventBus.getDefault().post(new AdjustStepBus(true));

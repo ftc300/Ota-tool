@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.xiaomi.smarthome.common.ui.dialog.MLAlertDialog;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -11,8 +12,11 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 
 import inshow.carl.com.csd.R;
+import inshow.carl.com.csd.csd.AesEncryptionUtil;
+import inshow.carl.com.csd.csd.core.HttpUtils;
 import inshow.carl.com.csd.csd.basic.BasicSingleButtonAct;
-import inshow.carl.com.csd.csd.core.BleManager;
+import inshow.carl.com.csd.csd.http.FunConsts;
+import inshow.carl.com.csd.csd.http.OperateFun;
 import inshow.carl.com.csd.tools.L;
 import inshow.carl.com.csd.view.LabelTextRow;
 import inshow.carl.com.csd.view.WatchNumberPicker;
@@ -21,7 +25,6 @@ import static inshow.carl.com.csd.csd.core.ConvertDataMgr.I2B_Control;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.I2B_WatchTime;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setCurrentTime;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3102;
-import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3106;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3107;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3109;
 import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_INSO;
@@ -38,13 +41,28 @@ public class NewAdjustTimeFirstAct extends BasicSingleButtonAct {
     private int selectM = -1;
     private int settingTime;
 
+
+    private void uploadTestFun(String key, long count) {
+        try {
+            Gson gson = new Gson();
+            OperateFun info = new OperateFun(System.currentTimeMillis() / 1000L, MAC, key, VERSION, new OperateFun.Value(count));
+            String content = gson.toJson(info);
+            L.d(content);
+            HttpUtils.getRequestQueue(this).add(HttpUtils.postInfo(AesEncryptionUtil.encrypt(content)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.d(e.getMessage());
+        }
+    }
+
     @Subscribe
     public void onEventMainThread(AdjustTimeBus event) {
         if (event.finish) {
             if (hasSelected()) {
                 generateSettingTime();
-                bleInstance.writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), setCurrentTime((int)(System.currentTimeMillis()/1000-951840000)));
+                bleInstance.writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), setCurrentTime((int) (System.currentTimeMillis() / 1000 - 951840000)));
                 bleInstance.writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3107), I2B_WatchTime(settingTime));
+                uploadTestFun(FunConsts.ADJUST_TIME,settingTime);
             }
             finish();
         }

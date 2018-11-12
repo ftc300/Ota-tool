@@ -1,11 +1,17 @@
 package inshow.carl.com.csd.csd.adjust;
 
+import com.google.gson.Gson;
+
 import org.greenrobot.eventbus.Subscribe;
 import java.util.UUID;
 import inshow.carl.com.csd.R;
+import inshow.carl.com.csd.csd.AesEncryptionUtil;
+import inshow.carl.com.csd.csd.core.HttpUtils;
 import inshow.carl.com.csd.csd.basic.BasicMultiButtonAct;
-import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.ConvertDataMgr;
+import inshow.carl.com.csd.csd.http.FunConsts;
+import inshow.carl.com.csd.csd.http.OperateFun;
+import inshow.carl.com.csd.tools.L;
 
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3106;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3108;
@@ -19,10 +25,23 @@ import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_INSO;
 public class NewAdjustStepFirstAct extends BasicMultiButtonAct {
 
     boolean hasChanged = false;
+    private void uploadTestFun(String key) {
+        try {
+            Gson gson = new Gson();
+            OperateFun info = new OperateFun(System.currentTimeMillis() / 1000L, MAC, key, VERSION, new OperateFun.Value());
+            String content = gson.toJson(info);
+            L.d(content);
+            HttpUtils.getRequestQueue(this).add(HttpUtils.postInfo(AesEncryptionUtil.encrypt(content)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            L.d(e.getMessage());
+        }
+    }
     @Subscribe
     public void onEventMainThread(AdjustStepBus event) {
         if(event.finish) {
             finish();
+            uploadTestFun(FunConsts.ADJUST_STEP);
         }
     }
 

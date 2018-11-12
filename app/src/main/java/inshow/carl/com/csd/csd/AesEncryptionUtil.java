@@ -17,8 +17,8 @@ import javax.crypto.spec.SecretKeySpec;
 public class AesEncryptionUtil {
     /** 算法/模式/填充 **/
     private static final String CipherMode = "AES/CBC/PKCS5Padding";
-
-
+    static String KEY="201802f9149e061d";
+    static String  IV ="5efd3f6060e22018";
     /** 创建密钥 **/
     private static SecretKeySpec createKey(String key) {
         byte[] data = null;
@@ -69,11 +69,11 @@ public class AesEncryptionUtil {
 
 
     /** 加密字节数据 **/
-    public static byte[] encrypt(byte[] content, String password, String iv) {
+    public static byte[] encrypt(byte[] content) {
         try {
-            SecretKeySpec key = createKey(password);
+            SecretKeySpec key = createKey(KEY);
             Cipher cipher = Cipher.getInstance(CipherMode);
-            cipher.init(Cipher.ENCRYPT_MODE, key, createIV(iv));
+            cipher.init(Cipher.ENCRYPT_MODE, key, createIV(IV));
             byte[] result = cipher.doFinal(content);
             return result;
         } catch (Exception e) {
@@ -84,14 +84,14 @@ public class AesEncryptionUtil {
 
 
     /** 加密(结果为16进制字符串) **/
-    public static String encrypt(String content, String password, String iv) {
+    public static String encrypt(String content) {
         byte[] data = null;
         try {
             data = content.getBytes("UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        data = encrypt(data, password, iv);
+        data = encrypt(data);
         String result = byte2hex(data);
         return result;
     }

@@ -82,7 +82,7 @@ public class CsdMgr {
 //                            L.d("MiWatchNormal:" + result.getDevice().getAddress() + ",isMiWatchNormal"+ bytes2HexString(b));
                             set.add(new MiWatch(cMac, false));
                         } else if (isMiWatchPressed(b)) {
-                            L.d("isMiWatchPressed:" +key.toString() + ",b:"+ bytes2HexString(b));
+                            L.d("isMiWatchPressed:" +cMac+","+key.toString() + ",b:"+ bytes2HexString(b));
                             try {
                                 count = hashMap.get(cMac);
                             }catch (Exception e){

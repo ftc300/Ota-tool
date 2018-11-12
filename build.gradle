@@ -3,6 +3,10 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 
     dependencies {
@@ -17,6 +21,10 @@ allprojects {
         maven { url 'https://raw.githubusercontent.com/xiaomi-passport/maven-repository/master/releases' }
         maven { url 'https://www.jitpack.io' }
         jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 }
 

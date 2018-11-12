@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +24,9 @@ import com.allenliu.badgeview.BadgeFactory;
 import com.allenliu.badgeview.BadgeView;
 import com.android.tu.loadingdialog.LoadingDailog;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -34,6 +39,7 @@ import inshow.carl.com.csd.BasicAct;
 import inshow.carl.com.csd.R;
 import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.CsdMgr;
+import inshow.carl.com.csd.csd.core.HttpUtils;
 import inshow.carl.com.csd.csd.iface.ICheckDeviceComplete;
 import inshow.carl.com.csd.csd.iface.ICheckDevicePressed;
 import inshow.carl.com.csd.csd.silentcamera.CapPhotoService;
@@ -45,6 +51,8 @@ import no.nordicsemi.android.support.v18.scanner.ScanCallback;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
+import static android.Manifest.permission.INTERNET;
 import static android.Manifest.permission.WRITE_SECURE_SETTINGS;
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
@@ -70,8 +78,6 @@ public class CSDAct extends BasicAct {
     long lastTs;
     LoadingDailog dialog;
     Intent service;
-    String KEY="625202f9149e061d";
-    String  IV ="5efd3f6060e20330";
     final ScanCallback callback = new ScanCallback() {
         @Override
         public void onScanFailed(int errorCode) {
@@ -103,6 +109,9 @@ public class CSDAct extends BasicAct {
                 startActivity(i);
                 finish();
             } else if (status == STATUS_DISCONNECTED) {
+                if(null!=dialog){
+                    dialog.dismiss();
+                }
                 bleInstance.unRegister(mac, mBleConnectStatusListener);
             }
         }
@@ -112,8 +121,38 @@ public class CSDAct extends BasicAct {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_csd);
-        HttpUtils.getRequestQueue(this).add(HttpUtils.postString("http://api.inshowlife.com/v1/client/check",AesEncryptionUtil.encrypt("inshow",KEY,IV)));
         ButterKnife.inject(this);
+        if(isNetworkAvailable()) {
+            AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.ACCESS_COARSE_LOCATION, Permission.WRITE_EXTERNAL_STORAGE)
+                    .onGranted(new Action<List<String>>() {
+                        @Override
+                        public void onAction(List<String> data) {
+                            start();
+                        }
+                    })
+                    .onDenied(new Action<List<String>>() {
+                        @Override
+                        public void onAction(List<String> data) {
+                            finish();
+                        }
+                    })
+                    .start();
+        } else {
+            showToast("网络异常");
+            finish();
+        }
+
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void start() {
         /////////
         Calendar cal = Calendar.getInstance();
         service = new Intent(getBaseContext(), CapPhotoService.class);
@@ -125,11 +164,6 @@ public class CSDAct extends BasicAct {
                 2000, pintent);
         startService(service);
         /////////
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                ) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION, WRITE_SECURE_SETTINGS}, PERMISSION_REQ);
-        }
         CsdMgr.getInstance().setCheckFinished(new ICheckDeviceComplete() {
             @Override
             public void checkFinished(HashSet<MiWatch> set) {
@@ -154,6 +188,7 @@ public class CSDAct extends BasicAct {
                     if (System.currentTimeMillis() - lastTs > 20 * 1000) {
                         showLoading(mac.split(":")[4]+mac.split(":")[5]);
                         lastTs = System.currentTimeMillis();
+//                        bleInstance.disConnect(mac);
                         bleInstance.connect(mac);
                         bleInstance.register(mac, mBleConnectStatusListener);
                     }
@@ -163,13 +198,8 @@ public class CSDAct extends BasicAct {
                 }
             }
         });
-
     }
 
-    @Override
-    public void onRequestPermissionsResult(final int requestCode, final String[] permissions, final int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     @Override
     protected void onResume() {
@@ -224,6 +254,16 @@ public class CSDAct extends BasicAct {
                 .setCancelable(false)
                 .setPositiveButton("确定", positive)
                 .setNegativeButton("取消", null)
+                .show();
+    }
+
+    public void showAlertDialog(String t, String m, DialogInterface.OnClickListener positive, DialogInterface.OnClickListener negative) {
+        new AlertDialog.Builder(context)
+                .setTitle(t)
+                .setMessage(m)
+                .setCancelable(false)
+                .setPositiveButton("确定", positive)
+                .setNegativeButton("取消", negative)
                 .show();
     }
 

@@ -129,7 +129,7 @@ public class WatchNumberPicker extends LinearLayout {
     };
 
     /**
-     * The text for showing the current value.
+     * The text for showing the current Value.
      */
     private final EditText mInputText;
 
@@ -179,22 +179,22 @@ public class WatchNumberPicker extends LinearLayout {
     private String[] mDisplayedValues;
 
     /**
-     * Lower value of the range of numbers allowed for the NumberPicker
+     * Lower Value of the range of numbers allowed for the NumberPicker
      */
     private int mMinValue;
 
     /**
-     * Upper value of the range of numbers allowed for the NumberPicker
+     * Upper Value of the range of numbers allowed for the NumberPicker
      */
     private int mMaxValue;
 
     /**
-     * Current value of this NumberPicker
+     * Current Value of this NumberPicker
      */
     private int mValue;
 
     /**
-     * Listener to be notified upon current value change.
+     * Listener to be notified upon current Value change.
      */
     private OnValueChangeListener mOnValueChangeListener;
 
@@ -204,12 +204,12 @@ public class WatchNumberPicker extends LinearLayout {
     private OnScrollListener mOnScrollListener;
 
     /**
-     * Formatter for for displaying the current value.
+     * Formatter for for displaying the current Value.
      */
     private Formatter mFormatter;
 
     /**
-     * The speed for updating the value form long press.
+     * The speed for updating the Value form long press.
      */
     private long mLongPressUpdateInterval = DEFAULT_LONG_PRESS_UPDATE_INTERVAL;
 
@@ -219,7 +219,7 @@ public class WatchNumberPicker extends LinearLayout {
     private final SparseArray<String> mSelectorIndexToStringCache = new SparseArray<String>();
 
     /**
-     * The selector indices whose value are show by the selector.
+     * The selector indices whose Value are show by the selector.
      */
     private final int[] mSelectorIndices = new int[SELECTOR_WHEEL_ITEM_COUNT];
 
@@ -269,13 +269,13 @@ public class WatchNumberPicker extends LinearLayout {
     private SetSelectionCommand mSetSelectionCommand;
 
     /**
-     * Handle to the reusable command for changing the current value from long
+     * Handle to the reusable command for changing the current Value from long
      * press by one.
      */
     private ChangeCurrentByOneFromLongPressCommand mChangeCurrentByOneFromLongPressCommand;
 
     /**
-     * Command for beginning an edit of the current value via IME on long press.
+     * Command for beginning an edit of the current Value via IME on long press.
      */
     private BeginSoftInputOnLongPressCommand mBeginSoftInputOnLongPressCommand;
 
@@ -386,16 +386,16 @@ public class WatchNumberPicker extends LinearLayout {
     private int mLastHandledDownDpadKeyCode = -1;
 
     /**
-     * Interface to listen for changes of the current value.
+     * Interface to listen for changes of the current Value.
      */
     public interface OnValueChangeListener {
 
         /**
-         * Called upon a change of the current value.
+         * Called upon a change of the current Value.
          *
          * @param picker The NumberPicker associated with this listener.
-         * @param oldVal The previous value.
-         * @param newVal The new value.
+         * @param oldVal The previous Value.
+         * @param newVal The new Value.
          */
         void onValueChange(WatchNumberPicker picker, int oldVal, int newVal);
     }
@@ -435,14 +435,14 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Interface used to format current value into a string for presentation.
+     * Interface used to format current Value into a string for presentation.
      */
     public interface Formatter {
 
         /**
-         * Formats a string representation of the current value.
+         * Formats a string representation of the current Value.
          *
-         * @param value The currently selected value.
+         * @param value The currently selected Value.
          * @return A formatted string representation.
          */
         public String format(int value);
@@ -1014,7 +1014,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Sets the listener to be notified on change of the current value.
+     * Sets the listener to be notified on change of the current Value.
      *
      * @param onValueChangedListener The listener.
      */
@@ -1032,7 +1032,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Set the formatter to be used for formatting the current value.
+     * Set the formatter to be used for formatting the current Value.
      * <p>
      * Note: If you have provided alternative values for the values this
      * formatter is never invoked.
@@ -1052,29 +1052,29 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Set the current value for the number picker.
+     * Set the current Value for the number picker.
      * <p>
      * If the argument is less than the {@link WatchNumberPicker#getMinValue()} and
      * {@link WatchNumberPicker#getWrapSelectorWheel()} is <code>false</code> the
-     * current value is set to the {@link WatchNumberPicker#getMinValue()} value.
+     * current Value is set to the {@link WatchNumberPicker#getMinValue()} Value.
      * </p>
      * <p>
      * If the argument is less than the {@link WatchNumberPicker#getMinValue()} and
      * {@link WatchNumberPicker#getWrapSelectorWheel()} is <code>true</code> the
-     * current value is set to the {@link WatchNumberPicker#getMaxValue()} value.
+     * current Value is set to the {@link WatchNumberPicker#getMaxValue()} Value.
      * </p>
      * <p>
      * If the argument is less than the {@link WatchNumberPicker#getMaxValue()} and
      * {@link WatchNumberPicker#getWrapSelectorWheel()} is <code>false</code> the
-     * current value is set to the {@link WatchNumberPicker#getMaxValue()} value.
+     * current Value is set to the {@link WatchNumberPicker#getMaxValue()} Value.
      * </p>
      * <p>
      * If the argument is less than the {@link WatchNumberPicker#getMaxValue()} and
      * {@link WatchNumberPicker#getWrapSelectorWheel()} is <code>true</code> the
-     * current value is set to the {@link WatchNumberPicker#getMinValue()} value.
+     * current Value is set to the {@link WatchNumberPicker#getMinValue()} Value.
      * </p>
      *
-     * @param value The current value.
+     * @param value The current Value.
      * @see #setWrapSelectorWheel(boolean)
      * @see #setMinValue(int)
      * @see #setMaxValue(int)
@@ -1124,7 +1124,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Gets whether the selector wheel wraps when reaching the min/max value.
+     * Gets whether the selector wheel wraps when reaching the min/max Value.
      *
      * @return True if the selector wheel wraps.
      *
@@ -1164,7 +1164,7 @@ public class WatchNumberPicker extends LinearLayout {
      * Sets the speed at which the numbers be incremented and decremented when
      * the up and down buttons are long pressed respectively.
      * <p>
-     * The default value is 300 ms.
+     * The default Value is 300 ms.
      * </p>
      *
      * @param intervalMillis The speed (in milliseconds) at which the numbers
@@ -1175,27 +1175,27 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Returns the value of the picker.
+     * Returns the Value of the picker.
      *
-     * @return The value.
+     * @return The Value.
      */
     public int getValue() {
         return mValue;
     }
 
     /**
-     * Returns the min value of the picker.
+     * Returns the min Value of the picker.
      *
-     * @return The min value
+     * @return The min Value
      */
     public int getMinValue() {
         return mMinValue;
     }
 
     /**
-     * Sets the min value of the picker.
+     * Sets the min Value of the picker.
      *
-     * @param minValue The min value inclusive.
+     * @param minValue The min Value inclusive.
      *
      * <strong>Note:</strong> The length of the displayed values array
      * set via {@link #setDisplayedValues(String[])} must be equal to the
@@ -1222,18 +1222,18 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Returns the max value of the picker.
+     * Returns the max Value of the picker.
      *
-     * @return The max value.
+     * @return The max Value.
      */
     public int getMaxValue() {
         return mMaxValue;
     }
 
     /**
-     * Sets the max value of the picker.
+     * Sets the max Value of the picker.
      *
-     * @param maxValue The max value inclusive.
+     * @param maxValue The max Value inclusive.
      *
      * <strong>Note:</strong> The length of the displayed values array
      * set via {@link #setDisplayedValues(String[])} must be equal to the
@@ -1399,10 +1399,10 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Makes a measure spec that tries greedily to use the max value.
+     * Makes a measure spec that tries greedily to use the max Value.
      *
      * @param measureSpec The measure spec.
-     * @param maxSize The max value for the size.
+     * @param maxSize The max Value for the size.
      * @return A measure spec greedily imposing the max size.
      */
     private int makeMeasureSpec(int measureSpec, int maxSize) {
@@ -1462,10 +1462,10 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Sets the current value of this NumberPicker.
+     * Sets the current Value of this NumberPicker.
      *
-     * @param current The new value of the NumberPicker.
-     * @param notifyChange Whether to notify if the current value changed.
+     * @param current The new Value of the NumberPicker.
+     * @param notifyChange Whether to notify if the current Value changed.
      */
     private void setValueInternal(int current, boolean notifyChange) {
         if (mValue == current) {
@@ -1489,9 +1489,9 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Changes the current value by one which is increment or
+     * Changes the current Value by one which is increment or
      * decrement based on the passes argument.
-     * decrement the current value.
+     * decrement the current Value.
      *
      * @param increment True to increment, false to decrement.
      */
@@ -1584,7 +1584,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * @return The wrapped index <code>selectorIndex</code> value.
+     * @return The wrapped index <code>selectorIndex</code> Value.
      */
     private int getWrappedSelectorIndex(int selectorIndex) {
         if (selectorIndex > mMaxValue) {
@@ -1653,10 +1653,10 @@ public class WatchNumberPicker extends LinearLayout {
     private void validateInputTextView(View v) {
         String str = String.valueOf(((TextView) v).getText());
         if (TextUtils.isEmpty(str)) {
-            // Restore to the old value as we don't allow empty values
+            // Restore to the old Value as we don't allow empty values
             updateInputTextView();
         } else {
-            // Check the new value and ensure it's in range
+            // Check the new Value and ensure it's in range
             int current = getSelectedPos(str.toString());
             setValueInternal(current, true);
         }
@@ -1664,7 +1664,7 @@ public class WatchNumberPicker extends LinearLayout {
 
     /**
      * Updates the view of this NumberPicker. If displayValues were specified in
-     * the string corresponding to the index specified by the current value will
+     * the string corresponding to the index specified by the current Value will
      * be returned. Otherwise, the formatter specified in {@link #setFormatter}
      * will be used to format the number.
      *
@@ -1673,7 +1673,7 @@ public class WatchNumberPicker extends LinearLayout {
     private boolean updateInputTextView() {
         /*
          * If we don't have displayed values then use the current number else
-         * find the correct value in the displayed values for the current
+         * find the correct Value in the displayed values for the current
          * number.
          */
         String text = (mDisplayedValues == null) ? formatNumber(mValue)
@@ -1687,7 +1687,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Notifies the listener, if registered, of a change of the value of this
+     * Notifies the listener, if registered, of a change of the Value of this
      * NumberPicker.
      */
     private void notifyChange(int previous, int current) {
@@ -1698,9 +1698,9 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Posts a command for changing the current value by one.
+     * Posts a command for changing the current Value by one.
      *
-     * @param increment Whether to increment or decrement the value.
+     * @param increment Whether to increment or decrement the Value.
      */
     private void postChangeCurrentByOneFromLongPress(boolean increment, long delayMillis) {
         if (mChangeCurrentByOneFromLongPressCommand == null) {
@@ -1713,7 +1713,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Removes the command for changing the current value by one.
+     * Removes the command for changing the current Value by one.
      */
     private void removeChangeCurrentByOneFromLongPress() {
         if (mChangeCurrentByOneFromLongPressCommand != null) {
@@ -1722,7 +1722,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Posts a command for beginning an edit of the current value via IME on
+     * Posts a command for beginning an edit of the current Value via IME on
      * long press.
      */
     private void postBeginSoftInputOnLongPressCommand() {
@@ -1735,7 +1735,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Removes the command for beginning an edit of the current value via IME.
+     * Removes the command for beginning an edit of the current Value via IME.
      */
     private void removeBeginSoftInputCommand() {
         if (mBeginSoftInputOnLongPressCommand != null) {
@@ -1760,7 +1760,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * @return The selected index given its displayed <code>value</code>.
+     * @return The selected index given its displayed <code>Value</code>.
      */
     private int getSelectedPos(String value) {
         if (mDisplayedValues == null) {
@@ -1849,7 +1849,7 @@ public class WatchNumberPicker extends LinearLayout {
                 int val = getSelectedPos(result);
 
                 /*
-                 * Ensure the user can't type in a value greater than the max
+                 * Ensure the user can't type in a Value greater than the max
                  * allowed. We have to allow less than min as the user might
                  * want to delete some numbers and then type a new number.
                  * And prevent multiple-"0" that exceeds the length of upper
@@ -1887,7 +1887,7 @@ public class WatchNumberPicker extends LinearLayout {
      * @return Whether an adjustment has been made.
      */
     private boolean ensureScrollWheelAdjusted() {
-        // adjust to the closest value
+        // adjust to the closest Value
         int deltaY = mInitialScrollOffset - mCurrentScrollOffset;
         if (deltaY != 0) {
             mPreviousScrollerY = 0;
@@ -1992,7 +1992,7 @@ public class WatchNumberPicker extends LinearLayout {
     }
 
     /**
-     * Command for changing the current value from a long press by one.
+     * Command for changing the current Value from a long press by one.
      */
     class ChangeCurrentByOneFromLongPressCommand implements Runnable {
         private boolean mIncrement;

@@ -37,7 +37,9 @@ public class AdjustBasicAct extends BasicAct {
     protected Context mContext;
     public static final String EXTRAS_EVENT_BUS = "EVENTBUS";
     public static final String EXTRAS_EVENT_MAC = "EXTRAS_EVENT_MAC";
+    public static final String EXTRAS_EVENT_VERSION = "EXTRAS_EVENT_VERSION";
     protected String MAC ;
+    protected String VERSION ;
     protected BleManager bleInstance = BleManager.getInstance();
     //直接跳转
     protected void switchTo(Class to) {
@@ -105,6 +107,7 @@ public class AdjustBasicAct extends BasicAct {
         setContentView(R.layout.watch_activity_base);
         mContext = this;
         MAC  = (String )SPManager.get(context,EXTRAS_EVENT_MAC,"");
+        VERSION  = (String )SPManager.get(context,EXTRAS_EVENT_VERSION,"");
         flTitle = (FrameLayout) findViewById(R.id.act_base_title);
         flContent = (FrameLayout) findViewById(R.id.act_base_content);
         flSelectAll = (FrameLayout) findViewById(R.id.select_all_title_bar);

@@ -18,7 +18,7 @@ public interface BluetoothClient {
 
     /**
      * 打开蓝牙扫描操作. 如果此时正在扫描将会抛出正在扫描 {@link BluetoothSearchConflictException} 错误。
-     * 如果想强制中断当前扫描操作，set cancel value to true.
+     * 如果想强制中断当前扫描操作，set cancel Value to true.
      *
      * @param millis 扫描时间
      * @param cancel 如果正在进行扫描操作，设置是否中断当前扫描。true 中断当前扫描操作，

@@ -11,10 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.tu.loadingdialog.LoadingDailog;
+import com.google.gson.Gson;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,7 +28,11 @@ import inshow.carl.com.csd.R;
 import inshow.carl.com.csd.csd.adjust.AdjustMainAct;
 import inshow.carl.com.csd.csd.core.BleManager;
 import inshow.carl.com.csd.csd.core.ConvertDataMgr;
+import inshow.carl.com.csd.csd.core.HttpUtils;
 import inshow.carl.com.csd.csd.core.SPManager;
+import inshow.carl.com.csd.csd.http.FunConsts;
+import inshow.carl.com.csd.csd.http.OperateFun;
+import inshow.carl.com.csd.csd.http.WatchInfo;
 import inshow.carl.com.csd.tools.L;
 
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
@@ -36,6 +40,8 @@ import static com.inuker.bluetooth.library.Constants.STATUS_DEVICE_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
 import static inshow.carl.com.csd.csd.basic.AdjustBasicAct.EXTRAS_EVENT_BUS;
 import static inshow.carl.com.csd.csd.basic.AdjustBasicAct.EXTRAS_EVENT_MAC;
+import static inshow.carl.com.csd.csd.basic.AdjustBasicAct.EXTRAS_EVENT_VERSION;
+import static inshow.carl.com.csd.csd.core.ConvertDataMgr.B2I_getStep;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.bytes2Char;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getCurrentStep;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.getCurrentTime;
@@ -45,11 +51,11 @@ import static inshow.carl.com.csd.csd.core.ConvertDataMgr.set0E;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setControlData;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setCurrentTime;
 import static inshow.carl.com.csd.csd.core.ConvertDataMgr.setVibrateData;
+import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3101;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3102;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3106;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3108;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3109;
-import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_310A;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3300;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_DEVICE_INFO;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_IMMEDIATE_ALERT;
@@ -98,6 +104,11 @@ public class TestWatchAct extends BasicAct {
     private int driveStep;
     private int clickCount;
     int batteryLevel = -1;
+    String currentVersion;
+    boolean isBatteryEnough;
+    int rtcTime;
+    boolean b = true;
+    boolean bReconnect = false;
     private final BleConnectStatusListener mBleConnectStatusListener = new BleConnectStatusListener() {
 
         @Override
@@ -107,6 +118,10 @@ public class TestWatchAct extends BasicAct {
                 tvState.setText("on");
                 btnDiscon.setEnabled(true);
                 btnRecon.setEnabled(false);
+                if(bReconnect) {
+                    bReconnect = false;
+                    refreshPage();
+                }
             } else if (status == STATUS_DISCONNECTED) {
                 L.d("TestWatchAct ble off");
                 if (isPassive) {
@@ -137,59 +152,13 @@ public class TestWatchAct extends BasicAct {
             bleInstance.register(MAC, mBleConnectStatusListener);
             tvState.setText(bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED ? "on" : "off");
             if (bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
-                BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_310A), new BleManager.IReadOnResponse() {
+                refreshPage();
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void onSuccess(byte[] data) {
-                        currentStep = getCurrentStep(data);
-                        tvCurrentStep.setText(currentStep + "");
+                    public void run() {
+                        uploadWatchInfo();
                     }
-
-                    @Override
-                    public void onFail() {
-                        showToast("操作失败");
-                    }
-                });
-                BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_DEVICE_INFO), UUID.fromString(CHARACTERISTIC_DEVICE_INFO), new BleManager.IReadOnResponse() {
-                    @Override
-                    public void onSuccess(byte[] data) {
-                        tvVersion.setText(bytes2Char(data));
-                    }
-
-                    @Override
-                    public void onFail() {
-                        showToast("操作失败");
-                    }
-                });
-
-                BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3300), new BleManager.IReadOnResponse() {
-                    @Override
-                    public void onSuccess(byte[] data) {
-                        batteryLevel = getPowerConsumption(data)[0];
-                        tvBattery.setText(batteryLevel > 30 ? "电量充足" : "电量不足");
-                    }
-
-                    @Override
-                    public void onFail() {
-                        showToast("读取电量操作失败");
-                    }
-                });
-                BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), new BleManager.IReadOnResponse() {
-                    @Override
-                    public void onSuccess(byte[] data) {
-                        int currentTime = getCurrentTime(data);
-                        long delta = System.currentTimeMillis() / 1000 - 951840000 - currentTime;
-                        L.d("currentTime:" + currentTime + ",delta = " + delta);
-                        boolean b = Math.abs(delta) < 2 * 60 ||  Math.abs(delta)%3600 <2*60;
-                        mTvRtcTime.setText( b? "正常" : "超标");
-                        mTvRtcTime.setBackgroundResource(b? R.color.green : R.color.red);
-                    }
-
-                    @Override
-                    public void onFail() {
-                        showToast("操作失败");
-                    }
-                });
-
+                },2000);
             }
 
         }
@@ -197,6 +166,123 @@ public class TestWatchAct extends BasicAct {
         btnRecon.setEnabled(false);
     }
 
+    private void refreshPage() {
+        BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3101), new BleManager.IReadOnResponse() {
+            @Override
+            public void onSuccess(byte[] data) {
+                currentStep = B2I_getStep(data)[0];
+                currentStep = getCurrentStep(data);
+                tvCurrentStep.setText(currentStep + "");
+            }
+
+            @Override
+            public void onFail() {
+                showToast("操作失败");
+            }
+        });
+        BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_DEVICE_INFO), UUID.fromString(CHARACTERISTIC_DEVICE_INFO), new BleManager.IReadOnResponse() {
+            @Override
+            public void onSuccess(byte[] data) {
+                currentVersion = bytes2Char(data);
+                tvVersion.setText(bytes2Char(data));
+                SPManager.put(context, EXTRAS_EVENT_VERSION, currentVersion);
+            }
+
+            @Override
+            public void onFail() {
+                showToast("操作失败");
+            }
+        });
+
+        BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3300), new BleManager.IReadOnResponse() {
+            @Override
+            public void onSuccess(byte[] data) {
+                batteryLevel = getPowerConsumption(data)[0];
+                isBatteryEnough = batteryLevel > 30;
+                tvBattery.setText(batteryLevel > 30 ? "电量充足" : "电量不足");
+                tvBattery.setBackgroundResource(batteryLevel > 30 ? R.color.green : R.color.red);
+            }
+
+            @Override
+            public void onFail() {
+                showToast("读取电量操作失败");
+            }
+        });
+        BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), new BleManager.IReadOnResponse() {
+            @Override
+            public void onSuccess(byte[] data) {
+                rtcTime = getCurrentTime(data) + 951840000;
+                int currentTime = getCurrentTime(data);
+                long delta = Math.abs(System.currentTimeMillis() / 1000 - 951840000 - currentTime);
+                int mod = (int) delta % 3600;
+                L.d("currentTimeMillis:" + System.currentTimeMillis() / 1000 + ",currentTime:" + (currentTime + 951840000) + ",delta = " + delta);
+                boolean b = delta < 2 * 60 || mod <= 2 * 60 || mod >= 3480;
+                mTvRtcTime.setText(b ? "正常" : "超标");
+                mTvRtcTime.setBackgroundResource(b ? R.color.green : R.color.red);
+                int a = getH(System.currentTimeMillis());
+                int c = getH((951840000 + currentTime) * 1000L);
+                L.d("a：" + a + ",c:" + c);
+                if (Math.abs(a - c) > 0 && delta>2*60 && b) {
+                    showAlertDialog("提示", "不是北京时间，请先调整为北京时间", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            bleInstance.writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), setCurrentTime((int) (System.currentTimeMillis() / 1000 - 951840000)));
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFail() {
+                showToast("操作失败");
+            }
+        });
+    }
+
+    private int getH(long time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        return calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+
+    private void uploadWatchInfo() {
+        try {
+            Gson gson = new Gson();
+            WatchInfo info = new WatchInfo(System.currentTimeMillis()/1000L,MAC,"watch_info",currentVersion,new WatchInfo.Value(currentStep,rtcTime,isBatteryEnough));
+            String content = gson.toJson(info);
+            L.d(content);
+            HttpUtils.getRequestQueue(this).add(HttpUtils.postInfo(AesEncryptionUtil.encrypt(content)));
+        }catch (Exception e){
+            e.printStackTrace();
+            L.d(e.getMessage());
+        }
+    }
+
+    private void uploadTestFun(String key,int count){
+        try {
+            Gson gson = new Gson();
+            OperateFun info = new OperateFun(System.currentTimeMillis()/1000L,MAC,key,currentVersion,new OperateFun.Value(count));
+            String content = gson.toJson(info);
+            L.d(content);
+            HttpUtils.getRequestQueue(this).add(HttpUtils.postInfo(AesEncryptionUtil.encrypt(content)));
+        }catch (Exception e){
+            e.printStackTrace();
+            L.d(e.getMessage());
+        }
+    }
+    private void uploadTestFun(String key){
+        try {
+            Gson gson = new Gson();
+            OperateFun info = new OperateFun(System.currentTimeMillis()/1000L,MAC,key,currentVersion,new OperateFun.Value());
+            String content = gson.toJson(info);
+            L.d(content);
+            HttpUtils.getRequestQueue(this).add(HttpUtils.postInfo(AesEncryptionUtil.encrypt(content)));
+        }catch (Exception e){
+            e.printStackTrace();
+            L.d(e.getMessage());
+        }
+    }
 
 
     @Override
@@ -238,6 +324,7 @@ public class TestWatchAct extends BasicAct {
                 break;
             case R.id.reconnect:
                 showToast("重新连接中...");
+                bReconnect = true;
                 bleInstance.connect(MAC);
                 break;
             case R.id.btnStep:
@@ -246,6 +333,7 @@ public class TestWatchAct extends BasicAct {
                 }
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
                     showToast("开始步针测试...");
+                    uploadTestFun(FunConsts.STEP_HAND);
                     if (currentStep == 0) {
                         driveStep = 60;
                     } else if (currentStep < GE10_HIGH_RANGE) {
@@ -268,9 +356,11 @@ public class TestWatchAct extends BasicAct {
             case R.id.btnHour:
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
                     showToast("开始分针测试...");
+                    uploadTestFun(FunConsts.TIME_HAND);
                     BleManager.getInstance().readCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3109), new BleManager.IReadOnResponse() {
                         @Override
                         public void onSuccess(byte[] data) {
+                            rtcTime = getCurrentTime(data);
                             int currentTime = getCurrentTime(data);
                             L.d("currentTime:" + currentTime);
                             if (currentTime > 0) {
@@ -298,6 +388,7 @@ public class TestWatchAct extends BasicAct {
 
                 if (!TextUtils.isEmpty(MAC) && bleInstance.getBleState(MAC) == STATUS_DEVICE_CONNECTED) {
                     showToast("开始振动测试...");
+                    uploadTestFun(FunConsts.VIBRATE);
                     BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_IMMEDIATE_ALERT), UUID.fromString(CHARACTERISTIC_IMMEDIATE_ALERT), setVibrateData());
                 }
                 break;
@@ -329,6 +420,8 @@ public class TestWatchAct extends BasicAct {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             i = 0;
+                            uploadTestFun(FunConsts.PRESSKEY,0);
+                            b = true;
                             BleManager.getInstance().writeCharacteristic(MAC, UUID.fromString(SERVICE_INSO), UUID.fromString(CHARACTERISTIC_3102), set0E());
                         }
                     });
@@ -342,6 +435,10 @@ public class TestWatchAct extends BasicAct {
                                         @Override
                                         public void onSuccess(byte[] data) {
                                             tvPress.setText(getSumPress(data) + "");
+                                            if(getSumPress(data)>0&&b) {
+                                                b = false;
+                                                uploadTestFun(FunConsts.PRESSKEY, 1);
+                                            }
                                         }
 
                                         @Override

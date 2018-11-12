@@ -55,6 +55,13 @@ public class ConvertDataMgr
         return (b[0] & 0x0FF) + ((b[1] & 0x0FF) << 8) + ((b[2] & 0x0FF) << 16) + ((b[3] & 0x0FF) << 24);
     }
 
+    public static int[] B2I_getStep(byte[] b) {
+        int[] ret = new int[2];
+        ret[0] = (b[0] & 0x0FF) + ((b[1] & 0x0FF) << 8) + ((b[2] & 0x0FF) << 16) + ((b[3] & 0x0FF) << 24);
+        ret[1] = (b[4] & 0x0FF) + ((b[5] & 0x0FF) << 8) + ((b[6] & 0x0FF) << 16) + ((b[7] & 0x0FF) << 24);
+        return ret;
+    }
+
     public static String getFirmVersion(){
         return "";
     }

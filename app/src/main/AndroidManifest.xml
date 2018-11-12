@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="inshow.carl.com.csd">
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -80,6 +81,7 @@
         <activity android:name=".csd.adjust.NewAdjustTimeFirstAct" />
         <activity android:name=".csd.adjust.NewAdjustTimeSecAct" />
         <activity android:name=".csd.adjust.NewAdjustTimeThirdAct" />
+
         <!--<activity android:name=".csd.silentcamera.SilentCameraMainActivity" />-->
 
         <!--<service android:name=".csd.silentcamera.CapPhotoService" android:enabled="true"/>-->
