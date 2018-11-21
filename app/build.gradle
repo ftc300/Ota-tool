@@ -7,8 +7,7 @@ android {
         applicationId "inshow.carl.com.ota_tool"
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 3
-        versionName "1.0.3"
+        versionCode 11
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -48,4 +47,5 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.yanzhenjie:permission:2.0.0-rc12'
+    compile project(path: ':update_lib')
 }

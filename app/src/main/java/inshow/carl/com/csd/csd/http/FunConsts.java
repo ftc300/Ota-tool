@@ -16,4 +16,5 @@ public class FunConsts {
    public static final String PRESSKEY = "presskey";
    public static final String ADJUST_TIME = "adjust_time";
    public static final String ADJUST_STEP = "adjust_step";
+   public static final String BATTERY= "battery";
 }

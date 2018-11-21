@@ -1,1 +1,1 @@
-include ':app',":zxinglite", ":swipelib",":common_ui"
+include ':app', ':update_lib',":zxinglite", ":swipelib",":common_ui"

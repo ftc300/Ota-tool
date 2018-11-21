@@ -59,7 +59,7 @@ public class AdjustMainAct extends AdjustBasicAct {
     protected void initViewOrData() {
         ((ImageView) findViewById(R.id.title_bar_return)).setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.std_tittlebar_main_device_back));
         ((TextView) findViewById(R.id.title_bar_title)).setTextColor(ContextCompat.getColor(mContext, R.color.std_word_001));
-        ((TextView) findViewById(R.id.title_bar_title)).setText("指针校准");
+        ((TextView) findViewById(R.id.title_bar_title)).setText(R.string.hands_adjust);
         findViewById(R.id.divider_line).setVisibility(View.VISIBLE);
         setBtnOnBackPress();
         tvTime = (TextView) findViewById(R.id.tv_adjust_time);

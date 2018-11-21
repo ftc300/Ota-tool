@@ -35,11 +35,15 @@ public class WatchInfo {
         int stepCount;
         int rtc_time;
         boolean battery_enough;
+        int peak;
+        int valley;
 
-        public Value(int arg_stepCount, int arg_rtc_time, boolean arg_battery_enough) {
+        public Value(int arg_stepCount, int arg_rtc_time, boolean arg_battery_enough,int peak,int valley) {
             stepCount = arg_stepCount;
             rtc_time = arg_rtc_time;
             battery_enough = arg_battery_enough;
+            this.peak = peak;
+            this.valley = valley;
         }
     }
 

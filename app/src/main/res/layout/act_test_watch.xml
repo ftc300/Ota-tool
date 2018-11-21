@@ -35,7 +35,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingTop="8dp"
-            android:text="手表调试"
+            android:text="@string/test_watch"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
 
@@ -78,7 +78,7 @@
                 android:layout_margin="20dp"
                 android:freezesText="true"
                 android:gravity="center"
-                android:text="基本信息"
+                android:text="@string/basic_info"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp" />
 
@@ -107,7 +107,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="MAC地址"
+                    android:text="@string/macAddres"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -159,7 +159,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="版本信息"
+                    android:text="@string/version_info"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -211,7 +211,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="当前步数"
+                    android:text="@string/current_step"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -263,7 +263,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="按键次数"
+                    android:text="@string/press_count"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -315,7 +315,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="连接状态"
+                    android:text="@string/connect_state"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -367,7 +367,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="电池状态"
+                    android:text="@string/battery_state"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -419,7 +419,7 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="手表内部时间"
+                    android:text="@string/inner_time"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
@@ -469,7 +469,7 @@
                     android:background="@drawable/btn_b"
                     android:enabled="false"
                     android:gravity="center"
-                    android:text="重新连接"
+                    android:text="@string/s1"
                     android:textColor="@color/white" />
 
                 <Button
@@ -482,7 +482,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/btn_b"
                     android:gravity="center"
-                    android:text="断开连接"
+                    android:text="@string/s2"
                     android:textColor="@color/white" />
             </TableRow>
 
@@ -496,7 +496,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_b"
                 android:gravity="center"
-                android:text="步针转一圈"
+                android:text="@string/s3"
                 android:textColor="@color/white" />
 
             <Button
@@ -509,7 +509,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_b"
                 android:gravity="center"
-                android:text="分针转一圈"
+                android:text="@string/s4"
                 android:textColor="@color/white" />
 
             <Button
@@ -522,7 +522,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_b"
                 android:gravity="center"
-                android:text="振动"
+                android:text="@string/s5"
                 android:textColor="@color/white" />
 
             <Button
@@ -535,7 +535,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_b"
                 android:gravity="center"
-                android:text="按键测试"
+                android:text="@string/s6"
                 android:textColor="@color/white" />
 
             <Button
@@ -548,7 +548,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_bg_red"
                 android:gravity="center"
-                android:text="恢复出厂设置"
+                android:text="@string/s7"
                 android:textColor="@color/white"
                 android:visibility="gone" />
 
@@ -562,7 +562,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_b"
                 android:gravity="center"
-                android:text="校准"
+                android:text="@string/s8"
                 android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>

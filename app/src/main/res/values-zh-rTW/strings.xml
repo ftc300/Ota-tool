@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Copyright 2017 Yan Zhenjie
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+
+    <string name="app_name">隱秀售後</string>
+    <string name="adjust_step_tip">滑動下方滾輪,\n使計步指針指示到0</string>
+    <string name="what_is_time">輸入手錶上指示的時間,\n而非當前標準時間</string>
+    <string name="next_step">下一步</string>
+    <string name="last_step">上一步</string>
+    <string name="adjust_sure">校準</string>
+    <string name="img_bottom_tip">點擊滾輪可以微調指標</string>
+    <string name="button_ok">確定</string>
+    <string name="h_hand_position">時針位置</string>
+    <string name="m_hand_position">分針位置</string>
+    <string name="deal_with_accurate_pos">不確定分針精確位置怎麼辦？</string>
+    <string name="tap_to_exact_mark">點擊轉針按鈕,\n讓分針對齊整刻度</string>
+    <string name="move_hand">轉針</string>
+    <string name="calibrate">校準</string>
+    <string name="tap_calibrate">點擊校準按鈕, 指標會自動轉到正確時間</string>
+    <string name="reference_step_hand">手錶步針顯示的是概要步數，每走大約400步，\n步針才會行進一格</string>
+    <string name="xx_00">點擊校準按鈕, 步針會自動指向當前準確步數</string>
+    <string name="xx_01">點擊或長按轉針按鈕，轉動\n步針，通過不中斷點按，\n使步針指向0刻度</string>
+    <string name="xx_03">步針未動怎麼回事?</string>
+    <string name="xx12">例如，手錶指標顯示為10點8分左右時，\n請把分針轉到10點10分</string>
+    <string name="pls_set_pos">請輸入手錶的指針位置</string>
+    <string name="button_cancel">取消</string>
+    <string name="have_adjusted">已校準</string>
+    <string name="adjust_step_point">校準計步指針</string>
+    <string name="adjust_time_point">校準計時指針</string>
+    <string name="net_error">網絡異常</string>
+    <string name="tip">提示</string>
+    <string name="pls_enable_ble">請打開藍牙</string>
+    <string name="ok">確定</string>
+    <string name="cancel">取消</string>
+    <string name="operate_fail">操作失敗</string>
+    <string name="battery_enough">電量充足</string>
+    <string name="battery_not_enough">電量不足</string>
+    <string name="good">正常</string>
+    <string name="bad">超標</string>
+    <string name="pls_adjust_to_bj">不是北京時間，請先調整為北京時間</string>
+    <string name="into_debug_mode">進入調試模式...</string>
+    <string name="closing">斷開連接中...</string>
+    <string name="reconning">重新連接中...</string>
+    <string name="read_current_step_fail">讀取當前步數失敗...</string>
+    <string name="start_step_hand_test">開始步針測試...</string>
+    <string name="start_time_test">開始分針測試...</string>
+    <string name="reading_battery">稍等正在讀取電量...</string>
+    <string name="low_power">電量低，無法開始振動測試...</string>
+    <string name="start_vibrate_test">開始振動測試...</string>
+    <string name="recovery">恢復出廠設置</string>
+    <string name="recovery_tip">該項測試會使手錶進入待機狀態，是否開始測試？</string>
+    <string name="recoverying">恢復出廠設置中...</string>
+    <string name="press_test">按鍵測試</string>
+    <string name="press_test_tip1">請在10s內連續按壓錶冠，並觀察基本資訊欄中按鍵次數變化。</string>
+    <string name="press_test_tip2">基本資訊欄中按鍵次數會被清零，並重新開啟10s監測按壓按鍵任務。</string>
+    <string name="pls_dont_press">請不要按壓錶冠退出中</string>
+    <string name="receive_press">檢測到按壓錶冠連接中</string>
+    <string name="hands_adjust">指針校準</string>
+    <string name="find_mijia_watch">發現米家石英表\n請按下按鍵來連接</string>
+    <string name="test_watch">手錶調試</string>
+    <string name="basic_info">基本信息</string>
+    <string name="macAddres">MAC地址</string>
+    <string name="version_info">版本信息</string>
+    <string name="current_step">當前步數</string>
+    <string name="press_count">按鍵次數</string>
+    <string name="connect_state">連接狀態</string>
+    <string name="battery_state">電池狀態</string>
+    <string name="inner_time">手錶內部時間</string>
+    <string name="s1">重新連接</string>
+    <string name="s2">斷開連接</string>
+    <string name="s3">步針轉一圈</string>
+    <string name="s4">分針轉一圈</string>
+    <string name="s5">振動</string>
+    <string name="s6">按鍵測試</string>
+    <string name="s7">恢復出廠設置</string>
+    <string name="s8">校準</string>
+</resources>

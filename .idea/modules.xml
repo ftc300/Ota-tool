@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/common_ui/common_ui.iml" filepath="$PROJECT_DIR$/common_ui/common_ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/swipelib/swipelib.iml" filepath="$PROJECT_DIR$/swipelib/swipelib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/update_lib/update_lib.iml" filepath="$PROJECT_DIR$/update_lib/update_lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/zxinglite/zxinglite.iml" filepath="$PROJECT_DIR$/zxinglite/zxinglite.iml" />
     </modules>
   </component>

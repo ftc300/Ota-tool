@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.allenliu.badgeview.BadgeFactory;
 import com.allenliu.badgeview.BadgeView;
 import com.android.tu.loadingdialog.LoadingDailog;
+import com.inso.watch.update_lib.update.UpdateChecker;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -56,6 +57,7 @@ import static android.Manifest.permission.INTERNET;
 import static android.Manifest.permission.WRITE_SECURE_SETTINGS;
 import static com.inuker.bluetooth.library.Constants.STATUS_CONNECTED;
 import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
+import static inshow.carl.com.csd.AppController.hasCheckVersion;
 import static inshow.carl.com.csd.csd.core.CsdConstant.CHARACTERISTIC_3102;
 import static inshow.carl.com.csd.csd.core.CsdConstant.SERVICE_INSO;
 import static inshow.carl.com.csd.csd.core.CsdMgr.startScan;
@@ -123,6 +125,10 @@ public class CSDAct extends BasicAct {
         setContentView(R.layout.act_csd);
         ButterKnife.inject(this);
         if(isNetworkAvailable()) {
+            if(!hasCheckVersion) {
+                UpdateChecker.checkForDialog(this);
+                hasCheckVersion = true;
+            }
             AndPermission.with(this)
                     .runtime()
                     .permission(Permission.ACCESS_COARSE_LOCATION, Permission.WRITE_EXTERNAL_STORAGE)
@@ -140,7 +146,7 @@ public class CSDAct extends BasicAct {
                     })
                     .start();
         } else {
-            showToast("网络异常");
+            showToast(getString(R.string.net_error));
             finish();
         }
 
@@ -186,7 +192,7 @@ public class CSDAct extends BasicAct {
 //                L.d("PressedMiWatchAct miWatchPressed mac:" + mac);
                 try {
                     if (System.currentTimeMillis() - lastTs > 20 * 1000) {
-                        showLoading(mac.split(":")[4]+mac.split(":")[5]);
+                        showLoading(true);
                         lastTs = System.currentTimeMillis();
 //                        bleInstance.disConnect(mac);
                         bleInstance.connect(mac);
@@ -208,7 +214,7 @@ public class CSDAct extends BasicAct {
         if (BleManager.getInstance().isBluetoothOpened()) {
             startScan(scanner, callback);
         } else {
-            showAlertDialog("提示", "请打开蓝牙", new DialogInterface.OnClickListener() {
+            showAlertDialog(getString(R.string.tip), getString(R.string.pls_enable_ble), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     BleManager.getInstance().openBle();
@@ -238,9 +244,10 @@ public class CSDAct extends BasicAct {
         scanner.stopScan(callback);
     }
 
-    public void showLoading(String endMac) {
+    public void showLoading(boolean arg_b) {
         LoadingDailog.Builder loadBuilder = new LoadingDailog.Builder(this)
-                .setMessage("检测到"+ endMac +"按压表冠连接中" )
+                .setMessage(getString(R.string.receive_press) )
+                .setShowMessage(arg_b)
                 .setCancelable(false)
                 .setCancelOutside(false);
         dialog = loadBuilder.create();
@@ -252,21 +259,8 @@ public class CSDAct extends BasicAct {
                 .setTitle(t)
                 .setMessage(m)
                 .setCancelable(false)
-                .setPositiveButton("确定", positive)
-                .setNegativeButton("取消", null)
+                .setPositiveButton(R.string.ok, positive)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
-
-    public void showAlertDialog(String t, String m, DialogInterface.OnClickListener positive, DialogInterface.OnClickListener negative) {
-        new AlertDialog.Builder(context)
-                .setTitle(t)
-                .setMessage(m)
-                .setCancelable(false)
-                .setPositiveButton("确定", positive)
-                .setNegativeButton("取消", negative)
-                .show();
-    }
-
-
-
 }

@@ -23,7 +23,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingTop="8dp"
-            android:text="隐秀售后"
+            android:text="@string/app_name"
             android:textColor="@color/headerTextColor"
             android:textSize="15sp" />
 
@@ -35,7 +35,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingBottom="8dp"
-            android:text="v6.0.0"
+            android:text="v6.2.2"
             android:textColor="@color/headerTextColor"
             android:textSize="12sp" />
 
@@ -61,7 +61,7 @@
             android:layout_gravity="top|center_horizontal"
             android:paddingTop="8dp"
             android:gravity="center"
-            android:text="发现米家石英表\n 请按下按键来连接"
+            android:text="@string/find_mijia_watch"
             android:textColor="@color/colorPrimary"
             android:padding="10dp"
             android:visibility="gone"

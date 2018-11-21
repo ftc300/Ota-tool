@@ -1,9 +1,7 @@
 package inshow.carl.com.csd;
 
 import android.app.Application;
-
 import com.orm.SugarContext;
-
 import inshow.carl.com.csd.csd.core.BleManager;
 
 /**
@@ -14,7 +12,7 @@ import inshow.carl.com.csd.csd.core.BleManager;
 
 
 public class AppController extends Application {
-
+    public static boolean hasCheckVersion = false;
     @Override
     public void onCreate() {
         super.onCreate();

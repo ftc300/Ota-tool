@@ -126,6 +126,10 @@ public class ConvertDataMgr
         return result;
     }
 
+    public static int[] B2I_getBatteryLevel2(byte[] b) {
+        return new int[]{(b[0] & 0x0FF) + ((b[1] & 0x0FF) << 8),(b[2] & 0x0FF) + ((b[3] & 0x0FF) << 8)};
+    }
+
     public static String bytes2HexString(byte[] bytes) {
         if (bytes == null) return "";
         String result = "";

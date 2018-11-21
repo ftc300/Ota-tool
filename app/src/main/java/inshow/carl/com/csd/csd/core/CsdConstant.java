@@ -13,6 +13,7 @@ public class CsdConstant {
     public static final String CHARACTERISTIC_DEVICE_INFO = "00002A28-0000-1000-8000-00805f9b34fb";
     public static final String CHARACTERISTIC_3101 = "c99a3101-7f3c-4e85-bde2-92f2037bfd42";
     public static final String CHARACTERISTIC_3102 = "c99a3102-7f3c-4e85-bde2-92f2037bfd42";
+    public static final String CHARACTERISTIC_3103 = "c99a3103-7f3c-4e85-bde2-92f2037bfd42";
     public static final String CHARACTERISTIC_3105 = "c99a3105-7f3c-4e85-bde2-92f2037bfd42";
     public static final String CHARACTERISTIC_3109 = "c99a3109-7f3c-4e85-bde2-92f2037bfd42";
     public static final String CHARACTERISTIC_3106 = "c99a3106-7f3c-4e85-bde2-92f2037bfd42";
