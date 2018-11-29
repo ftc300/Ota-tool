@@ -87,4 +87,6 @@
     <string name="s6">按鍵測試</string>
     <string name="s7">恢復出廠設置</string>
     <string name="s8">校準</string>
+    <string name="ensure_nobody_press">請盡量確保周圍無人正在同時按壓其它米家石英表按鍵</string>
+    <string name="dfu">固件升級</string>
 </resources>

@@ -68,7 +68,7 @@ public class MainPagerHelper {
             if (null != path) {
                 final File file = new File(path);
                 filePath.setText(path);
-                saveSelectFileInfo(path, file.getName());
+//                saveSelectFileInfo(path, file.getName());
             }
 
         } catch (URISyntaxException e) {
@@ -100,17 +100,17 @@ public class MainPagerHelper {
         return intentFilter;
     }
 
-    public static void saveSelectFileInfo(String path, String name) {
-        FileEntity fileEntity = new FileEntity(path, name);
-        fileEntity.save();
-    }
+//    public static void saveSelectFileInfo(String path, String name) {
+//        FileEntity fileEntity = new FileEntity(path, name);
+//        fileEntity.save();
+//    }
 
-    public static void loadFileInfo(TextView filePath) {
-        FileEntity f = FileEntity.last(FileEntity.class);
-        if (null != f) {
-            filePath.setText(f.filePath);
-        }
-    }
+//    public static void loadFileInfo(TextView filePath) {
+//        FileEntity f = FileEntity.last(FileEntity.class);
+//        if (null != f) {
+//            filePath.setText(f.filePath);
+//        }
+//    }
 
     public static SwipeMenuCreator getSwipeMenuCreator(final Context context) {
         return new SwipeMenuCreator() {

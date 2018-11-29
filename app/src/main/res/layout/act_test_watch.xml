@@ -564,6 +564,18 @@
                 android:gravity="center"
                 android:text="@string/s8"
                 android:textColor="@color/white" />
+            <Button
+                android:id="@+id/btn_dfu"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_b"
+                android:gravity="center"
+                android:text="@string/dfu"
+                android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -55,7 +55,7 @@ import static inshow.carl.com.csd.DaemonManager.ProcessEnums.DFU_PROCESSING;
 import static inshow.carl.com.csd.MainPagerHelper.getSwipeMenuCreator;
 import static inshow.carl.com.csd.MainPagerHelper.getSwipeMenuItemClickListener;
 import static inshow.carl.com.csd.MainPagerHelper.handleChooseFile;
-import static inshow.carl.com.csd.MainPagerHelper.loadFileInfo;
+//import static inshow.carl.com.csd.MainPagerHelper.loadFileInfo;
 import static inshow.carl.com.csd.MainPagerHelper.makeGattUpdateIntentFilter;
 import static inshow.carl.com.csd.MainPagerHelper.showFileChooser;
 import static inshow.carl.com.csd.MainPagerHelper.startOTA;
@@ -265,7 +265,7 @@ public class MainActivity extends BasicAct implements TextWatcher {
                 showFileChooser((Activity) context);
             }
         });
-        loadFileInfo(filePath);
+//        loadFileInfo(filePath);
         et.addTextChangedListener(this);
         et.setImeOptions(EditorInfo.IME_ACTION_DONE);
         etGun.setImeOptions(EditorInfo.IME_ACTION_DONE);

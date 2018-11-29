@@ -24,6 +24,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import inshow.carl.com.csd.BasicAct;
+import inshow.carl.com.csd.DfuAct;
+import inshow.carl.com.csd.MainActivity;
 import inshow.carl.com.csd.R;
 import inshow.carl.com.csd.csd.adjust.AdjustMainAct;
 import inshow.carl.com.csd.csd.core.BleManager;
@@ -346,9 +348,13 @@ public class TestWatchAct extends BasicAct {
         return bleInstance.getBleState(MAC) == STATUS_CONNECTED;
     }
 
-    @OnClick({R.id.adjust, R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
+    @OnClick({R.id.btn_dfu,R.id.adjust, R.id.back, R.id.tvState, R.id.disconnect, R.id.reconnect, R.id.btnHour, R.id.btnPress, R.id.btnStep, R.id.btnVibrate, R.id.btnRecovery, R.id.tvVersion, R.id.tvBattery})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.btn_dfu:
+                Intent intentDFU = new Intent(TestWatchAct.this, MainActivity.class);
+                startActivity(intentDFU);
+                break;
             case R.id.adjust:
                 Intent intent = new Intent(TestWatchAct.this, AdjustMainAct.class);
                 intent.putExtra(EXTRAS_EVENT_BUS, true);
@@ -548,7 +554,7 @@ public class TestWatchAct extends BasicAct {
                 });
 
             }
-        }, 5000);
+        }, 7000);
     }
 }
 

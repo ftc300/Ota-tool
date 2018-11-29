@@ -54,17 +54,28 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:paddingTop="8dp"
+            android:gravity="center"
+            android:text="@string/ensure_nobody_press"
+            android:padding="10dp"
+            android:textSize="16sp" />
+
         <TextView
             android:id="@+id/tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
             android:paddingTop="8dp"
+            android:layout_marginTop="60dp"
             android:gravity="center"
             android:text="@string/find_mijia_watch"
             android:textColor="@color/colorPrimary"
             android:padding="10dp"
-            android:visibility="gone"
             android:textSize="16sp" />
 
         <inshow.carl.com.csd.view.radar.RadarScanView

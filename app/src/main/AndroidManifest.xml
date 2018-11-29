@@ -32,7 +32,7 @@
         android:icon="@mipmap/csd"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name="inshow.carl.com.csd.AppController"
+        android:name=".AppController"
         android:theme="@style/AppTheme">
         <meta-data android:name="DATABASE" android:value="ota.db" />
         <meta-data android:name="VERSION" android:value="1" />
@@ -62,14 +62,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!--<activity android:namMiMainActivityvity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
         <activity android:name="inshow.carl.com.csd.DfuAct"/>
         <!--<activity android:name="inshow.carl.com.csd.WeChatCaptureActivity"/>-->
         <activity android:name="inshow.carl.com.csd.csd.TestWatchAct"
@@ -81,6 +73,7 @@
         <activity android:name=".csd.adjust.NewAdjustTimeFirstAct" />
         <activity android:name=".csd.adjust.NewAdjustTimeSecAct" />
         <activity android:name=".csd.adjust.NewAdjustTimeThirdAct" />
+        <activity android:name=".MainActivity" />
 
         <!--<activity android:name=".csd.silentcamera.SilentCameraMainActivity" />-->
 
